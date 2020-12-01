@@ -1,0 +1,82 @@
+body {
+  /* background-color:rgb(129, 233, 219); */
+  background-image: url('../assets/wood.jpg');
+  margin: 0;
+  padding: 0;
+  overflow:hidden;
+}
+
+img {
+  height: 100%;
+  width: 100%;
+}
+
+.wrapper {
+  height: 90vh;
+  width: 90vw;
+  background-color: transparent;
+  overflow: hidden;
+  /* border:1px solid hotpink; */
+}
+
+.portfolio {
+  height: 100%;
+  width: 100%;
+  background-color:transparent;
+  overflow: hidden;
+  /* border:1px solid yellow; */
+}
+
+.image_thumb { 
+position:absolute;
+/* border: 1px solid hotpink; */
+  width:100px;
+  height:130px; 
+  border-radius:8px;
+  overflow:hidden;
+  /* filter: sepia(100%)  brightness(90%) hue-rotate(180deg); */
+  filter: grayscale(90%);
+  transition:0.5s;
+  box-shadow: 0 0 5px 0 rgba(14, 12, 90, 0.2);
+}
+
+.image_thumb:hover{
+  z-index:1;
+  filter: grayscale(0%);
+}
+
+.pick {
+  filter: grayscale(0%);
+  z-index:999;
+  box-shadow: 0 0 10px 0 rgba(14, 12, 90, 0.3);
+}
+
+.cover {
+  position:fixed;
+  top:0px;
+  display: none;
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  /* background-color:rgba(255,50,50,0.5) */
+}
+
+.cover.display {
+  display: flex;
+  z-index:9;
+  justify-content: center;
+  align-items: center;
+}
+
+.bigger_image {
+/*   height: calc(50% -20px);
+  width: auto;
+  transition: 1s; */
+}
+
+.bigger_image img {
+  height: 100%;
+  width: 100%;
+  border-radius: 8px;
+}
