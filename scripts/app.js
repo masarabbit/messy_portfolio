@@ -131,8 +131,8 @@ function init() {
       biggerWidth = (window.innerHeight - 50) * ( e.target.width / e.target.height )
     } else {
       console.log('testB')
-      biggerHeight = (window.innerWidth - 40) * ( e.target.height / e.target.width )
-      biggerWidth = window.innerWidth - 40
+      biggerHeight = (window.innerWidth - 50) * ( e.target.height / e.target.width )
+      biggerWidth = window.innerWidth - 50
     }
     
     // setTimeout(()=>{
