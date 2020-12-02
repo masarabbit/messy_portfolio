@@ -121,23 +121,25 @@ function init() {
       hidePrevImage(prevImage)
     }
 
-    e.target.parentNode.style.height = `${window.innerHeight - 50}px`
-    e.target.parentNode.style.width = `${(window.innerHeight - 50) * (e.target.width / e.target.height)}px` 
-    e.target.parentNode.classList.add('pick')
-    
     if (screenAspect === 'horizontal'){
       console.log('test')
       biggerHeight = window.innerHeight - 50
       biggerWidth = (window.innerHeight - 50) * ( e.target.width / e.target.height )
     } else {
       console.log('testB')
-      biggerHeight = (window.outerWidth - 20) * ( e.target.height / e.target.width )
-      biggerWidth = window.outerWidth - 20
+      biggerHeight = (window.innerWidth - 40) * ( e.target.height / e.target.width )
+      biggerWidth = (window.innerWidth - 40) 
     }
+
+    e.target.parentNode.style.height = `${biggerHeight}px`
+    e.target.parentNode.style.width = `${biggerWidth}px` 
+    e.target.parentNode.classList.add('pick')
+    
+
     
     // setTimeout(()=>{
-    const newPos = (window.outerHeight - biggerHeight ) / 2 //* this need too be diferent?
-    const newLeft = (window.outerWidth - biggerWidth ) / 2
+    const newPos = (window.innerHeight - biggerHeight ) / 2 //* this need too be diferent?
+    const newLeft = (window.innerWidth - biggerWidth ) / 2
     // console.log(e.target)
     e.target.parentNode.style.transform = 'rotate(0deg)'
     e.target.parentNode.style.top = `${newPos}px`
