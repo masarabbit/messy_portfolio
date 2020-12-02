@@ -27,16 +27,12 @@ function init() {
     const randomTopPos = `${Math.floor(Math.random() * 70)}%`
     const randomLeftPos = `${Math.floor(Math.random() * 70)}%`
     const portfolio = document.querySelector('.portfolio')
-    const ratio = object.height / object.width
 
     // console.log(randomAngle)
     newImage.classList.add('image_thumb')
     newImage.innerHTML = `<img src = "./assets/${object.image}" alt = "${object.image.replace('.jpg','')}">`
-    // newImage.style.height = `${object.height}px`
-    // newImage.style.width = `${object.width}px`
-
-    newImage.style.height = `${25 * ratio}vh`
-    newImage.style.width = '25vh'
+    newImage.style.height = `${object.height}px`
+    newImage.style.width = `${object.width}px`
     newImage.style.top = randomTopPos
     newImage.style.left = randomLeftPos
     newImage.style.transform = 'rotate(' + randomAngle + 'deg)'
@@ -83,6 +79,24 @@ function init() {
     // },800)
   }
 
+
+
+  // function reposition(){
+  //   const imageDisplayed = document.querySelectorAll('.image_thumb')
+  //   const randomTopPos = `${Math.floor(Math.random() * 70)}%`
+  //   const randomLeftPos = `${Math.floor(Math.random() * 70)}%`
+
+  //   imageDisplayed.forEach( image =>{
+  //     console.log(image)
+  //     // const index = images.indexOf(image)
+  //     // image.style.top = `${randomTopPositions[index]}`
+  //     // image.style.left = `${randomLeftPositions[index]}`
+  //     image.style.top = `${randomTopPos}%`
+  //     image.style.left = `${randomLeftPos}%`
+  //   })
+  // }
+
+
   function displayImage(e){
       
     if (!document.querySelector('.pick')){
@@ -94,7 +108,6 @@ function init() {
 
     e.target.parentNode.style.height = `${window.innerHeight - 50}px`
     e.target.parentNode.style.width = `${(window.innerHeight - 50) * (e.target.width / e.target.height)}px` 
-    e.target.parentNode.classList.add('pick')
     
     setTimeout(()=>{
       const newPos = (window.innerHeight - e.target.offsetHeight) / 2
@@ -103,6 +116,7 @@ function init() {
       e.target.parentNode.style.transform = 'rotate(0deg)'
       e.target.parentNode.style.top = `${newPos}px`
       e.target.parentNode.style.left = `${newLeft}px`
+      e.target.parentNode.classList.add('pick')
 
       e.target.parentNode.removeEventListener('click',displayImage)
       e.target.parentNode.addEventListener('click',hideImage)
@@ -116,13 +130,12 @@ function init() {
     e.target.parentNode.addEventListener('click',displayImage)
 
     const index = images.indexOf(e.target.parentNode)
-    const ratio = imageArray[index].height / imageArray[index].width
     
     images[index].style.transform = `rotate(${randomAngles[index]}deg)`
     images[index].style.top = `${randomTopPositions[index]}`
     images[index].style.left = `${randomLeftPositions[index]}`
-    images[index].style.height = `${25 * ratio}vh`
-    images[index].style.width = '25vh'
+    images[index].style.height = `${imageArray[index].height}px`
+    images[index].style.width = `${imageArray[index].width}px`
     e.target.parentNode.classList.remove('pick')
   }
   
@@ -133,13 +146,12 @@ function init() {
     prevImage.addEventListener('click',displayImage)
 
     const index = images.indexOf(prevImage)
-    const ratio = imageArray[index].height / imageArray[index].width
     
     prevImage.style.transform = `rotate(${randomAngles[index]}deg)`
     prevImage.style.top = `${randomTopPositions[index]}`
     prevImage.style.left = `${randomLeftPositions[index]}`
-    prevImage.style.height = `${25 * ratio}vh`
-    prevImage.style.width = '25vh'
+    prevImage.style.height = `${imageArray[index].height}px`
+    prevImage.style.width = `${imageArray[index].width}px`
     prevImage.classList.remove('pick')
   }
 
@@ -149,19 +161,3 @@ function init() {
 }
 
 window.addEventListener('DOMContentLoaded', init)
-
-
-// function reposition(){
-//   const imageDisplayed = document.querySelectorAll('.image_thumb')
-//   const randomTopPos = `${Math.floor(Math.random() * 70)}%`
-//   const randomLeftPos = `${Math.floor(Math.random() * 70)}%`
-
-//   imageDisplayed.forEach( image =>{
-//     console.log(image)
-//     // const index = images.indexOf(image)
-//     // image.style.top = `${randomTopPositions[index]}`
-//     // image.style.left = `${randomLeftPositions[index]}`
-//     image.style.top = `${randomTopPos}%`
-//     image.style.left = `${randomLeftPos}%`
-//   })
-// }
