@@ -3,6 +3,22 @@ function init() {
 
   const body = document.querySelector('body')
   let images = []
+  let screenAspect = 'horizontal'
+  let aspectKey = 'vh'
+  let imgSize = 25
+  let biggerHeight
+  let biggerWidth
+
+  if (window.innerHeight > window.innerWidth){ 
+    screenAspect = 'vertical'
+  }
+
+  if (screenAspect === 'vertical'){
+    aspectKey = 'vw'
+  } 
+
+  console.log(screenAspect)
+  console.log(aspectKey)
 
   // const cover = document.querySelector('.cover')
 
@@ -35,8 +51,8 @@ function init() {
     // newImage.style.height = `${object.height}px`
     // newImage.style.width = `${object.width}px`
 
-    newImage.style.height = `${25 * ratio}vh`
-    newImage.style.width = '25vh'
+    newImage.style.height = `${imgSize * ratio}${aspectKey}`
+    newImage.style.width = `${imgSize + aspectKey}`
     newImage.style.top = randomTopPos
     newImage.style.left = randomLeftPos
     newImage.style.transform = 'rotate(' + randomAngle + 'deg)'
@@ -78,9 +94,22 @@ function init() {
     </div>`
 
     // setTimeout(()=>{
-    console.log('test')
     setUp()
     // },800)
+
+    if (window.innerHeight > window.innerWidth){ 
+      screenAspect = 'vertical'
+    } else {
+      screenAspect = 'horizontal'
+    }
+  
+    if (screenAspect === 'vertical'){
+      aspectKey = 'vw'
+    } else {
+      aspectKey = 'vh'
+    }
+    
+    console.log(`${screenAspect}_${aspectKey}`)
   }
 
   function displayImage(e){
@@ -96,17 +125,27 @@ function init() {
     e.target.parentNode.style.width = `${(window.innerHeight - 50) * (e.target.width / e.target.height)}px` 
     e.target.parentNode.classList.add('pick')
     
-    setTimeout(()=>{
-      const newPos = (window.innerHeight - e.target.offsetHeight) / 2
-      const newLeft = (window.innerWidth - e.target.offsetWidth) / 2
-      // console.log(e.target)
-      e.target.parentNode.style.transform = 'rotate(0deg)'
-      e.target.parentNode.style.top = `${newPos}px`
-      e.target.parentNode.style.left = `${newLeft}px`
+    if (screenAspect === 'horizontal'){
+      console.log('test')
+      biggerHeight = window.innerHeight - 50
+      biggerWidth = (window.innerHeight - 50) * ( e.target.width / e.target.height )
+    } else {
+      console.log('testB')
+      biggerHeight = (window.innerWidth - 20) * ( e.target.height / e.target.width )
+      biggerWidth = window.innerWidth - 20
+    }
+    
+    // setTimeout(()=>{
+    const newPos = (window.innerHeight - biggerHeight ) / 2 //* this need too be diferent?
+    const newLeft = (window.innerWidth - biggerWidth ) / 2
+    // console.log(e.target)
+    e.target.parentNode.style.transform = 'rotate(0deg)'
+    e.target.parentNode.style.top = `${newPos}px`
+    e.target.parentNode.style.left = `${newLeft}px`
 
-      e.target.parentNode.removeEventListener('click',displayImage)
-      e.target.parentNode.addEventListener('click',hideImage)
-    },500)
+    e.target.parentNode.removeEventListener('click',displayImage)
+    e.target.parentNode.addEventListener('click',hideImage)
+    // },500)
  
   }
 
@@ -121,8 +160,8 @@ function init() {
     images[index].style.transform = `rotate(${randomAngles[index]}deg)`
     images[index].style.top = `${randomTopPositions[index]}`
     images[index].style.left = `${randomLeftPositions[index]}`
-    images[index].style.height = `${25 * ratio}vh`
-    images[index].style.width = '25vh'
+    images[index].style.height = `${imgSize * ratio}${aspectKey}`
+    images[index].style.width = `${imgSize + aspectKey}`
     e.target.parentNode.classList.remove('pick')
   }
   
@@ -138,8 +177,8 @@ function init() {
     prevImage.style.transform = `rotate(${randomAngles[index]}deg)`
     prevImage.style.top = `${randomTopPositions[index]}`
     prevImage.style.left = `${randomLeftPositions[index]}`
-    prevImage.style.height = `${25 * ratio}vh`
-    prevImage.style.width = '25vh'
+    prevImage.style.height = `${imgSize * ratio}${aspectKey}`
+    prevImage.style.width = `${imgSize + aspectKey}`
     prevImage.classList.remove('pick')
   }
 
@@ -165,3 +204,22 @@ window.addEventListener('DOMContentLoaded', init)
 //     image.style.left = `${randomLeftPos}%`
 //   })
 // }
+
+
+
+
+//  e.target.parentNode.style.height = `${window.innerHeight - 50}px`
+//     e.target.parentNode.style.width = `${(window.innerHeight - 50) * (e.target.width / e.target.height)}px` 
+//     e.target.parentNode.classList.add('pick')
+    
+//     setTimeout(()=>{
+//       const newPos = (window.innerHeight - e.target.offsetHeight) / 2
+//       const newLeft = (window.innerWidth - e.target.offsetWidth) / 2
+//       // console.log(e.target)
+//       e.target.parentNode.style.transform = 'rotate(0deg)'
+//       e.target.parentNode.style.top = `${newPos}px`
+//       e.target.parentNode.style.left = `${newLeft}px`
+
+//       e.target.parentNode.removeEventListener('click',displayImage)
+//       e.target.parentNode.addEventListener('click',hideImage)
+//     },500)
