@@ -28,8 +28,8 @@ img {
 }
 
 .image_thumb { 
-position:absolute;
-/* border: 1px solid hotpink; */
+  position:absolute;
+  /* border: 1px solid hotpink; */
   width:100px;
   height:130px; 
   border-radius:8px;

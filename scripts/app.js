@@ -5,7 +5,7 @@ function init() {
   let images = []
   let screenAspect = 'horizontal'
   let aspectKey = 'vh'
-  let imgSize = 25
+  const imgSize = 25
   let biggerHeight
   let biggerWidth
 
@@ -26,11 +26,11 @@ function init() {
     { height: 264,width: 200,image: 'cocoala.jpg' },
     { height: 264,width: 200,image: 'cocoala.jpg' },
     { height: 264,width: 200,image: 'cocoala.jpg' },
-    { height: 264,width: 200,image: 'cocoala.jpg' },
     { height: 282,width: 200, image: 'icecream.jpg' },
     { height: 282,width: 200, image: 'icecream.jpg' },
     { height: 282,width: 200, image: 'icecream.jpg' },
-    { height: 282,width: 200, image: 'icecream.jpg' }
+    { height: 200,width: 200, image: 'boxing_bunny.gif' },
+    { height: 562,width: 800, image: 'pizza_squirrel.jpg' }
   ]
 
   let randomAngles = []
@@ -43,16 +43,23 @@ function init() {
     const randomTopPos = `${Math.floor(Math.random() * 70)}%`
     const randomLeftPos = `${Math.floor(Math.random() * 70)}%`
     const portfolio = document.querySelector('.portfolio')
-    const ratio = object.height / object.width
+    let vertRatio = 1
+    let horiRatio = 1
+    
+    if (object.height > object.width || object.height === object.width){
+      vertRatio = object.height / object.width
+    } else {
+      horiRatio = object.width / object.height 
+    }
 
     // console.log(randomAngle)
     newImage.classList.add('image_thumb')
-    newImage.innerHTML = `<img src = "./assets/${object.image}" alt = "${object.image.replace('.jpg','')}">`
+    newImage.innerHTML = `<img src = "./assets/${object.image}" alt = "${object.image.replace('.jpg','').replace('.gif','')}">`
     // newImage.style.height = `${object.height}px`
     // newImage.style.width = `${object.width}px`
 
-    newImage.style.height = `${imgSize * ratio}${aspectKey}`
-    newImage.style.width = `${imgSize + aspectKey}`
+    newImage.style.height = `${imgSize * vertRatio + aspectKey}`
+    newImage.style.width = `${imgSize * horiRatio + aspectKey}`
     newImage.style.top = randomTopPos
     newImage.style.left = randomLeftPos
     newImage.style.transform = 'rotate(' + randomAngle + 'deg)'
@@ -127,8 +134,8 @@ function init() {
       biggerWidth = (window.innerHeight - 50) * ( e.target.width / e.target.height )
     } else {
       console.log('testB')
-      biggerHeight = (window.innerWidth - 40) * ( e.target.height / e.target.width )
-      biggerWidth = (window.innerWidth - 40) 
+      biggerHeight = (window.innerWidth - 20) * ( e.target.height / e.target.width )
+      biggerWidth = (window.innerWidth - 20) 
     }
 
     e.target.parentNode.style.height = `${biggerHeight}px`
