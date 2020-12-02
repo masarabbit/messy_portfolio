@@ -1,24 +1,28 @@
 function init() {
 
-
   const body = document.querySelector('body')
+  const imgSize = 30
   let images = []
   let screenAspect = 'horizontal'
   let aspectKey = 'vh'
-  const imgSize = 25
   let biggerHeight
   let biggerWidth
 
-  if (window.innerHeight > window.innerWidth){ 
-    screenAspect = 'vertical'
+  checkOrientation()
+
+  function checkOrientation(){
+    if (window.innerHeight > window.innerWidth){ 
+      screenAspect = 'vertical'
+    } else {
+      screenAspect = 'horizontal'
+    }
+  
+    if (screenAspect === 'vertical'){
+      aspectKey = 'vw'
+    } else {
+      aspectKey = 'vh'
+    }
   }
-
-  if (screenAspect === 'vertical'){
-    aspectKey = 'vw'
-  } 
-
-  console.log(screenAspect)
-  console.log(aspectKey)
 
   // const cover = document.querySelector('.cover')
 
@@ -32,10 +36,6 @@ function init() {
     { height: 200,width: 200, image: 'boxing_bunny.gif' },
     { height: 562,width: 800, image: 'pizza_squirrel.jpg' }
   ]
-
-  let randomAngles = []
-  let randomTopPositions = []
-  let randomLeftPositions = []
 
   function createImage(object){
     const newImage = document.createElement('div')
@@ -52,11 +52,8 @@ function init() {
       horiRatio = object.width / object.height 
     }
 
-    // console.log(randomAngle)
     newImage.classList.add('image_thumb')
     newImage.innerHTML = `<img src = "./assets/${object.image}" alt = "${object.image.replace('.jpg','').replace('.gif','')}">`
-    // newImage.style.height = `${object.height}px`
-    // newImage.style.width = `${object.width}px`
 
     newImage.style.height = `${imgSize * vertRatio + aspectKey}`
     newImage.style.width = `${imgSize * horiRatio + aspectKey}`
@@ -64,19 +61,21 @@ function init() {
     newImage.style.left = randomLeftPos
     newImage.style.transform = 'rotate(' + randomAngle + 'deg)'
     portfolio.appendChild(newImage)
+    
+    object.vertRatio = vertRatio
+    object.horiRatio = horiRatio
+    object.angle = randomAngle
+    object.topPos = randomTopPos
+    object.leftPos = randomLeftPos
 
     images.push(newImage)
-    randomAngles.push(randomAngle)
-    randomTopPositions.push(randomTopPos)
-    randomLeftPositions.push(randomLeftPos)
   }
 
-  function setUp(){
 
+  function setUp(){
     imageArray.forEach(image =>{ //* display images
       createImage(image)
     })
-  
   
     images.forEach(image =>{
       image.addEventListener('click',displayImage)
@@ -91,103 +90,76 @@ function init() {
     })
     
     images = []
-    randomAngles = []
-    randomTopPositions = []
-    randomLeftPositions = []
 
     body.innerHTML = `
     <div class ='wrapper'>
       <div class="portfolio"></div>
     </div>`
 
-    // setTimeout(()=>{
     setUp()
-    // },800)
-
-    if (window.innerHeight > window.innerWidth){ 
-      screenAspect = 'vertical'
-    } else {
-      screenAspect = 'horizontal'
-    }
-  
-    if (screenAspect === 'vertical'){
-      aspectKey = 'vw'
-    } else {
-      aspectKey = 'vh'
-    }
-    
-    console.log(`${screenAspect}_${aspectKey}`)
+    checkOrientation()
   }
 
-  function displayImage(e){
-      
+
+  function displayImage(e){    
     if (!document.querySelector('.pick')){
-      console.log('no image') 
+      // console.log('no image') 
     } else {
       const prevImage = document.querySelector('.pick')
       hidePrevImage(prevImage)
     }
 
     if (screenAspect === 'horizontal'){
-      console.log('test')
+      // console.log('test')
       biggerHeight = window.innerHeight - 50
       biggerWidth = (window.innerHeight - 50) * ( e.target.width / e.target.height )
     } else {
-      console.log('testB')
+      // console.log('testB')
       biggerHeight = (window.innerWidth - 20) * ( e.target.height / e.target.width )
       biggerWidth = (window.innerWidth - 20) 
     }
-
-    e.target.parentNode.style.height = `${biggerHeight}px`
-    e.target.parentNode.style.width = `${biggerWidth}px` 
-    e.target.parentNode.classList.add('pick')
     
-
-    
-    // setTimeout(()=>{
-    const newPos = (window.innerHeight - biggerHeight ) / 2 //* this need too be diferent?
+    const newPos = (window.innerHeight - biggerHeight ) / 2 
     const newLeft = (window.innerWidth - biggerWidth ) / 2
-    // console.log(e.target)
+
     e.target.parentNode.style.transform = 'rotate(0deg)'
     e.target.parentNode.style.top = `${newPos}px`
     e.target.parentNode.style.left = `${newLeft}px`
+    e.target.parentNode.style.height = `${biggerHeight}px`
+    e.target.parentNode.style.width = `${biggerWidth}px` 
+    e.target.parentNode.classList.add('pick')
 
     e.target.parentNode.removeEventListener('click',displayImage)
     e.target.parentNode.addEventListener('click',hideImage)
-    // },500)
- 
   }
 
-  function hideImage(e){
 
+  function hideImage(e){
     e.target.parentNode.removeEventListener('click',hideImage)
     e.target.parentNode.addEventListener('click',displayImage)
 
     const index = images.indexOf(e.target.parentNode)
-    const ratio = imageArray[index].height / imageArray[index].width
-    
-    images[index].style.transform = `rotate(${randomAngles[index]}deg)`
-    images[index].style.top = `${randomTopPositions[index]}`
-    images[index].style.left = `${randomLeftPositions[index]}`
-    images[index].style.height = `${imgSize * ratio}${aspectKey}`
-    images[index].style.width = `${imgSize + aspectKey}`
+  
+    images[index].style.transform = `rotate(${imageArray[index].angle}deg)`
+    images[index].style.top = `${imageArray[index].topPos}`
+    images[index].style.left = `${imageArray[index].leftPos}`
+    images[index].style.height = `${imgSize * imageArray[index].vertRatio + aspectKey}`
+    images[index].style.width = `${imgSize * imageArray[index].horiRatio + aspectKey}`
     e.target.parentNode.classList.remove('pick')
   }
   
 
   function hidePrevImage(prevImage){
-
     prevImage.removeEventListener('click',hideImage)
     prevImage.addEventListener('click',displayImage)
 
     const index = images.indexOf(prevImage)
-    const ratio = imageArray[index].height / imageArray[index].width
-    
-    prevImage.style.transform = `rotate(${randomAngles[index]}deg)`
-    prevImage.style.top = `${randomTopPositions[index]}`
-    prevImage.style.left = `${randomLeftPositions[index]}`
-    prevImage.style.height = `${imgSize * ratio}${aspectKey}`
-    prevImage.style.width = `${imgSize + aspectKey}`
+  
+    prevImage.style.transform = `rotate(${imageArray[index].angle}deg)`
+    prevImage.style.top = `${imageArray[index].topPos}`
+    prevImage.style.left = `${imageArray[index].leftPos}`
+    prevImage.style.height = `${imgSize * imageArray[index].vertRatio + aspectKey}`
+    prevImage.style.width = `${imgSize * imageArray[index].horiRatio + aspectKey}`
     prevImage.classList.remove('pick')
   }
 
@@ -197,38 +169,3 @@ function init() {
 }
 
 window.addEventListener('DOMContentLoaded', init)
-
-
-// function reposition(){
-//   const imageDisplayed = document.querySelectorAll('.image_thumb')
-//   const randomTopPos = `${Math.floor(Math.random() * 70)}%`
-//   const randomLeftPos = `${Math.floor(Math.random() * 70)}%`
-
-//   imageDisplayed.forEach( image =>{
-//     console.log(image)
-//     // const index = images.indexOf(image)
-//     // image.style.top = `${randomTopPositions[index]}`
-//     // image.style.left = `${randomLeftPositions[index]}`
-//     image.style.top = `${randomTopPos}%`
-//     image.style.left = `${randomLeftPos}%`
-//   })
-// }
-
-
-
-
-//  e.target.parentNode.style.height = `${window.innerHeight - 50}px`
-//     e.target.parentNode.style.width = `${(window.innerHeight - 50) * (e.target.width / e.target.height)}px` 
-//     e.target.parentNode.classList.add('pick')
-    
-//     setTimeout(()=>{
-//       const newPos = (window.innerHeight - e.target.offsetHeight) / 2
-//       const newLeft = (window.innerWidth - e.target.offsetWidth) / 2
-//       // console.log(e.target)
-//       e.target.parentNode.style.transform = 'rotate(0deg)'
-//       e.target.parentNode.style.top = `${newPos}px`
-//       e.target.parentNode.style.left = `${newLeft}px`
-
-//       e.target.parentNode.removeEventListener('click',displayImage)
-//       e.target.parentNode.addEventListener('click',hideImage)
-//     },500)
