@@ -1,6 +1,6 @@
 body {
-  /* background-color:rgb(129, 233, 219); */
-  background-image: url('../assets/wood.jpg');
+  /* background-image: url('../assets/wood.jpg'); */
+  background-color: #81d8d0;
   margin: 0;
   padding: 0;
   overflow:hidden;
@@ -29,29 +29,44 @@ img {
 
 .image_thumb { 
   position:absolute;
-  /* border: 1px solid hotpink; */
+  transition:0.4s;
+  /* border: 1px solid #29bfb1; */
   width:100px;
   height:130px; 
   border-radius:8px;
   overflow:hidden;
-  /* filter: sepia(100%)  brightness(90%) hue-rotate(180deg); */
-  filter: grayscale(90%);
-  transition:0.5s;
-  box-shadow: 0 0 5px 0 rgba(14, 12, 90, 0.2);
+  /* box-shadow: 0 0 5px 0 rgba(14, 12, 90, 0.2); */
+  /* filter: sepia(100%) brightness(100%) hue-rotate(290deg); */
 }
 
 .image_thumb:hover{
   z-index:1;
-  filter: grayscale(0%);
+  /* background-color: hotpink; */
+  filter: sepia(0%) brightness(100%) hue-rotate(0deg);
+}
+
+.image_thumb img:hover{
+  /* opacity:0.4; */
 }
 
 .pick {
-  filter: grayscale(0%);
+  background-color: transparent;
   z-index:999;
-  box-shadow: 0 0 10px 0 rgba(14, 12, 90, 0.3);
+  opacity:1;
+  filter: sepia(0%) brightness(100%) hue-rotate(0deg);
+  /* box-shadow: 0 0 10px 0 rgba(14, 12, 90, 0.3); */
 }
 
-.cover {
+.pick:hover {
+  filter: sepia(0%) brightness(100%) hue-rotate(0deg);
+}
+
+.pick img:hover { 
+  opacity:1;
+  /* border: transparent solid 10px; */
+}
+
+/* .cover {
   position:fixed;
   top:0px;
   display: none;
@@ -59,7 +74,7 @@ img {
   width: 100%;
   padding: 0;
   margin: 0;
-  /* background-color:rgba(255,50,50,0.5) */
+  background-color:rgba(255,50,50,0.5)
 }
 
 .cover.display {
@@ -67,16 +82,5 @@ img {
   z-index:9;
   justify-content: center;
   align-items: center;
-}
+} */
 
-.bigger_image {
-/*   height: calc(50% -20px);
-  width: auto;
-  transition: 1s; */
-}
-
-.bigger_image img {
-  height: 100%;
-  width: 100%;
-  border-radius: 8px;
-}

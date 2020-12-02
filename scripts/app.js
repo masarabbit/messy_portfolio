@@ -27,22 +27,24 @@ function init() {
   // const cover = document.querySelector('.cover')
 
   const imageArray = [
+    { height: 200,width: 200,image: 'mochimochiusagi.gif' },
+    { height: 634,width: 450,image: 'popcorn_bunny.png' },
     { height: 264,width: 200,image: 'cocoala.jpg' },
-    { height: 264,width: 200,image: 'cocoala.jpg' },
-    { height: 264,width: 200,image: 'cocoala.jpg' },
-    { height: 282,width: 200, image: 'icecream.jpg' },
-    { height: 282,width: 200, image: 'icecream.jpg' },
+    { height: 200,width: 200, image: 'smile.gif' },
+    { height: 660,width: 450, image: 'rhino_banana.jpg' },
     { height: 282,width: 200, image: 'icecream.jpg' },
     { height: 200,width: 200, image: 'boxing_bunny.gif' },
-    { height: 562,width: 800, image: 'pizza_squirrel.jpg' }
+    { height: 562,width: 800, image: 'pizza_squirrel.jpg' },
+    { height: 1414,width: 1000, image: 'animals.jpg' },
+    { height: 750,width: 500, image: 'bunny_icecream2.jpg' }
   ]
 
   function createImage(object){
+    const portfolio = document.querySelector('.portfolio')
     const newImage = document.createElement('div')
     const randomAngle = Math.floor(Math.random() * 360)
     const randomTopPos = `${Math.floor(Math.random() * 70)}%`
     const randomLeftPos = `${Math.floor(Math.random() * 70)}%`
-    const portfolio = document.querySelector('.portfolio')
     let vertRatio = 1
     let horiRatio = 1
     
@@ -53,7 +55,7 @@ function init() {
     }
 
     newImage.classList.add('image_thumb')
-    newImage.innerHTML = `<img src = "./assets/${object.image}" alt = "${object.image.replace('.jpg','').replace('.gif','')}">`
+    newImage.innerHTML = `<img src = "./assets/${object.image}" alt = "${object.image.replace('_',' ').replace('.jpg','').replace('.gif','').replace('.png','')}">`
 
     newImage.style.height = `${imgSize * vertRatio + aspectKey}`
     newImage.style.width = `${imgSize * horiRatio + aspectKey}`
