@@ -172,16 +172,16 @@ function init() {
 
     const index = images.indexOf(e.target.parentNode)
 
-    if (Math.floor(Math.random() * 2) === 1){
-      setVertRatioAndHoriRatio(imageArray[index])
-      setRandomAngleAndPosition(e.target.parentNode,imageArray[index])
-    } else {  //* randomly switches between random position and previous position
-      images[index].style.transform = `rotate(${imageArray[index].angle}deg)`
-      images[index].style.top = `${imageArray[index].topPos}`
-      images[index].style.left = `${imageArray[index].leftPos}`
-      images[index].style.height = `${imgSize * imageArray[index].vertRatio + aspectKey}`
-      images[index].style.width = `${imgSize * imageArray[index].horiRatio + aspectKey}`
-    }
+    // if (Math.floor(Math.random() * 2) === 1){
+    setVertRatioAndHoriRatio(imageArray[index])
+    setRandomAngleAndPosition(e.target.parentNode,imageArray[index])
+    // } else {  //* randomly switches between random position and previous position
+    //   images[index].style.transform = `rotate(${imageArray[index].angle}deg)`
+    //   images[index].style.top = `${imageArray[index].topPos}`
+    //   images[index].style.left = `${imageArray[index].leftPos}`
+    //   images[index].style.height = `${imgSize * imageArray[index].vertRatio + aspectKey}`
+    //   images[index].style.width = `${imgSize * imageArray[index].horiRatio + aspectKey}`
+    // }
 
     e.target.parentNode.classList.remove('pick')
     e.target.parentNode.classList.remove('z1')
@@ -194,16 +194,16 @@ function init() {
 
     const index = images.indexOf(prevImage)
 
-    if (Math.floor(Math.random() * 2) === 1){
-      setVertRatioAndHoriRatio(imageArray[index])
-      setRandomAngleAndPosition(prevImage,imageArray[index])
-    } else {
-      prevImage.style.transform = `rotate(${imageArray[index].angle}deg)`
-      prevImage.style.top = `${imageArray[index].topPos}`
-      prevImage.style.left = `${imageArray[index].leftPos}`
-      prevImage.style.height = `${imgSize * imageArray[index].vertRatio + aspectKey}`
-      prevImage.style.width = `${imgSize * imageArray[index].horiRatio + aspectKey}`
-    }
+    // if (Math.floor(Math.random() * 2) === 1){
+    //   setVertRatioAndHoriRatio(imageArray[index])
+    //   setRandomAngleAndPosition(prevImage,imageArray[index])
+    // } else {
+    prevImage.style.transform = `rotate(${imageArray[index].angle}deg)`
+    prevImage.style.top = `${imageArray[index].topPos}`
+    prevImage.style.left = `${imageArray[index].leftPos}`
+    prevImage.style.height = `${imgSize * imageArray[index].vertRatio + aspectKey}`
+    prevImage.style.width = `${imgSize * imageArray[index].horiRatio + aspectKey}`
+    // }
     
     prevImage.classList.remove('pick')
     prevImage.classList.remove('z1')
