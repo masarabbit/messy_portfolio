@@ -2,208 +2,169 @@
 //! setting z-index explicitly will overwrite anything done in css...
 
 function init() {
-
-  // const body = document.querySelector('body')
-  const imgSize = 30
-  const images = []
-  let screenAspect = 'horizontal'
-  let aspectKey = 'vh'
-  let biggerHeight
-  let biggerWidth
-  let vertRatio = 1
-  let horiRatio = 1
-
-  checkOrientation()
-
-  function checkOrientation(){
-    if (window.innerHeight > window.innerWidth){ 
-      screenAspect = 'vertical'
-    } else {
-      screenAspect = 'horizontal'
-    }
   
-    if (screenAspect === 'vertical'){
-      aspectKey = 'vw'
-    } else {
-      aspectKey = 'vh'
-    }
-  }
-
-  // const cover = document.querySelector('.cover')
-
-  const imageArray = [
-    { height: 200,width: 200,image: 'mochimochiusagi.gif' },
-    { height: 634,width: 450,image: 'popcorn_bunny.png' },
-    { height: 264,width: 200,image: 'cocoala.jpg' },
-    { height: 200,width: 200, image: 'smile.gif' },
-    { height: 660,width: 450, image: 'rhino_banana.jpg' },
-    { height: 282,width: 200, image: 'icecream.jpg' },
-    { height: 200,width: 200, image: 'boxing_bunny.gif' },
-    { height: 562,width: 800, image: 'pizza_squirrel.jpg' },
-    { height: 1414,width: 1000, image: 'animals.jpg' },
-    { height: 750,width: 500, image: 'bunny_icecream2.jpg' }
+  const imgData = [
+    { h: 200, w: 200, img: 'mochimochiusagi.gif' },
+    { h: 634, w: 450, img: 'popcorn_bunny.png' },
+    { h: 264, w: 200, img: 'cocoala.jpg' },
+    { h: 200, w: 200, img: 'smile.gif' },
+    { h: 660, w: 450, img: 'rhino_banana.jpg' },
+    { h: 282, w: 200, img: 'icecream.jpg' },
+    { h: 200, w: 200, img: 'boxing_bunny.gif' },
+    { h: 562, w: 800, img: 'pizza_squirrel.jpg' },
+    { h: 1414, w: 1000, img: 'animals.jpg' },
+    { h: 750, w: 500, img: 'bunny_icecream2.jpg' }
   ]
-  
-  function setVertRatioAndHoriRatio(object){
-    
-    //! call something to set image's orientation?
 
-    if (object.height > object.width || object.height === object.width){
-      vertRatio = object.height / object.width
-      horiRatio = 1
-    } else {
-      horiRatio = object.width / object.height 
-      vertRatio = 1
-    }
-    
-    object.vertRatio = vertRatio
-    object.horiRatio = horiRatio
+  const portfolio = document.querySelector('.portfolio')
+
+  const setting = {
+    imgSize: 30,
+    images: [],
+    screenAspect: 'horizontal',
+    aspectKey: 'vh',
+    greaterH: null,
+    greaterW: null,
+    vertRatio: 1,
+    horiRatio: 1,
+    currentImg: null,
   }
 
-  function setRandomAngleAndPosition(image,object) {
-    const randomAngle = Math.floor(Math.random() * 360)
-    const randomTopPos = `${Math.floor(Math.random() * 70)}%`
-    const randomLeftPos = `${Math.floor(Math.random() * 70)}%`
+  const checkOrientation = () =>{
+    screenAspect = window.innerHeight > window.innerWidth ? 'vertical' : 'horizontal'
+    aspectKey = screenAspect === 'vertical' ? 'vw' : 'vh'
+  }
 
-    image.style.height = `${imgSize * vertRatio + aspectKey}`
-    image.style.width = `${imgSize * horiRatio + aspectKey}`
-    image.style.top = randomTopPos
-    image.style.left = randomLeftPos
-    image.style.transform = 'rotate(' + randomAngle + 'deg)'
-    
-    object.angle = randomAngle
-    object.topPos = randomTopPos
-    object.leftPos = randomLeftPos
+  const randomPos = () => `${Math.floor(Math.random() * 70)}%`
+  const randomAngle = () => Math.floor(Math.random() * 360)
+  const isNum = x => typeof x === 'number'
+  const px = num => `${num}px`
+
+  const setStyles = ({ target, h, w, x, y, deg }) =>{
+    if (h) target.style.height = h
+    if (w) target.style.width = w
+    if (y) target.style.top = y
+    if (x) target.style.left = x
+    if (isNum(deg)) target.style.transform = `rotate(${deg}deg)`
+  }
+
+  const alt = imgName => {
+    let alt = imgName
+    ;['.jpg', '.gif', '.png'].forEach(l => alt = alt.replace(l, ''))
+    return alt.replace('_', ' ')
+  }
+
+  const setVertRatioAndHoriRatio = obj =>{
+    const { h, w } = obj
+    const isVert = h >= w
+    setting.vertRatio = isVert ? h / w : 1
+    setting.horiRatio = isVert ? 1 : w / h
+  }
+
+  const setRandomAngleAndPosition = (image, obj) => {
+    obj.angle = randomAngle()
+    obj.topPos = randomPos()
+    obj.leftPos = randomPos()
+
+    const { imgSize, vertRatio, horiRatio, aspectKey } = setting
+    setStyles({
+      target: image,
+      h: `${imgSize * vertRatio + aspectKey}`,
+      w: `${imgSize * horiRatio + aspectKey}`,
+      y: obj.topPos,
+      x: obj.leftPos,
+      deg: obj.angle
+    })
     image.classList.add('z1')
   }
-
-
-  function createImage(object){
-    const portfolio = document.querySelector('.portfolio')
-    const newImage = document.createElement('div')
-
-    setVertRatioAndHoriRatio(object)
-    
-    newImage.classList.add('image_thumb')
-    newImage.innerHTML = `<img src = "./assets/${object.image}" alt = "${object.image.replace('_',' ').replace('.jpg','').replace('.gif','').replace('.png','')}">`
-    
-    setRandomAngleAndPosition(newImage,object)
-    
-    portfolio.appendChild(newImage)
-    images.push(newImage)
-  }
-
-
-  function setUp(){
-    imageArray.forEach(image =>{ //* display images
-      createImage(image)
-    })
   
-    images.forEach(image =>{
-      image.addEventListener('click',displayImage)
-    })
+  const createImage = (obj, index) => {
+    const newImg = document.createElement('div')
+    setVertRatioAndHoriRatio(obj)
+    newImg.classList.add('image_thumb')
+    newImg.innerHTML = `<img data-index="${index}" src= "./assets/${obj.img}" alt="${alt(obj.img)}">`
+    setRandomAngleAndPosition(newImg, obj)
+    
+    portfolio.appendChild(newImg)
+    setting.images.push(newImg)
   }
 
-  function reposition() {
+  const setUp = () => {
+    imgData.forEach((img, i) => createImage(img, i))
+    setting.images.forEach(img => img.addEventListener('click', displayImage))
+  }
+
+  const reposition = () => {
     checkOrientation()
 
-    for (let i = 0; i < imageArray.length; i++){
-      setVertRatioAndHoriRatio(imageArray[i])
-      setRandomAngleAndPosition(images[i],imageArray[i])
-      console.log(images[i])
-    }
+    imgData.forEach((img, i) => {
+      setVertRatioAndHoriRatio(img)
+      setRandomAngleAndPosition(setting.images[i], img)
+    })
   }
-  
-  
-  // function reset(){
 
-  //   images.forEach(image =>{
-  //     image.removeEventListener('click',displayImage)
-  //   })
-    
-  //   images = []
-
-  //   body.innerHTML = `
-  //   <div class ='wrapper'>
-  //     <div class="portfolio"></div>
-  //   </div>`
-
-  //   setUp()
-  //   checkOrientation()
-  // }
-
-
-  function displayImage(e){    
-    if (!document.querySelector('.pick')){
-      // console.log('no image') 
-    } else {
+  const displayImage = e => {    
+    // TODO replace this bit using currentImg value
+    if (document.querySelector('.pick')){
       const prevImage = document.querySelector('.pick')
       hidePrevImage(prevImage)
     }
-
-    if (screenAspect === 'horizontal'){ //! this should also check for image ratio
-      // console.log('test')
-      biggerHeight = window.innerHeight - 50
-      biggerWidth = (window.innerHeight - 50) * ( e.target.width / e.target.height )
-    } else {
-      // console.log('testB')
-      biggerHeight = (window.innerWidth - 20) * ( e.target.height / e.target.width )
-      biggerWidth = (window.innerWidth - 20) 
-    }
     
-    const newPos = (window.innerHeight - biggerHeight ) / 2 
-    const newLeft = (window.innerWidth - biggerWidth ) / 2
+    setting.currentImg = e.target.dataset.index
+    const { innerHeight: h, innerWidth: w } = window
+    const isHorizontal = screenAspect === 'horizontal'
 
-    e.target.parentNode.style.transform = 'rotate(0deg)'
-    e.target.parentNode.style.top = `${newPos}px`
-    e.target.parentNode.style.left = `${newLeft}px`
-    e.target.parentNode.style.height = `${biggerHeight}px`
-    e.target.parentNode.style.width = `${biggerWidth}px` 
+    setting.greaterH = isHorizontal 
+      ? h - 50 
+      : (w - 20) * (e.target.height / e.target.width)
+  
+    setting.greaterW = isHorizontal 
+      ? (h - 50) * (e.target.width / e.target.height)
+      : w - 20
+      
+    setStyles({
+      target: e.target.parentNode,
+      w: px(setting.greaterW),
+      h: px(setting.greaterH),
+      y: px((h - setting.greaterH) / 2),
+      x: px((w - setting.greaterW) / 2),
+      deg: 0,
+    })
+    
     e.target.parentNode.classList.add('pick')
-
-    e.target.parentNode.removeEventListener('click',displayImage)
-    e.target.parentNode.addEventListener('click',hideImage)
+    e.target.parentNode.removeEventListener('click', displayImage)
+    e.target.parentNode.addEventListener('click', hideImage)
   }
 
 
-  function hideImage(e){
-    e.target.parentNode.removeEventListener('click',hideImage)
-    e.target.parentNode.addEventListener('click',displayImage)
+  const hideImage = e => {
+    e.target.parentNode.removeEventListener('click', hideImage)
+    e.target.parentNode.addEventListener('click', displayImage)
 
-    const index = images.indexOf(e.target.parentNode)
-
-    // if (Math.floor(Math.random() * 2) === 1){
-    setVertRatioAndHoriRatio(imageArray[index])
-    setRandomAngleAndPosition(e.target.parentNode,imageArray[index])
-    // } else {  //* randomly switches between random position and previous position
-    //   images[index].style.transform = `rotate(${imageArray[index].angle}deg)`
-    //   images[index].style.top = `${imageArray[index].topPos}`
-    //   images[index].style.left = `${imageArray[index].leftPos}`
-    //   images[index].style.height = `${imgSize * imageArray[index].vertRatio + aspectKey}`
-    //   images[index].style.width = `${imgSize * imageArray[index].horiRatio + aspectKey}`
-    // }
+    const img = imgData[+e.target.dataset.index]
+    setVertRatioAndHoriRatio(img)
+    setRandomAngleAndPosition(e.target.parentNode, img)
 
     e.target.parentNode.classList.remove('pick')
     e.target.parentNode.classList.remove('z1')
   }
   
 
-  function hidePrevImage(prevImage){
-    prevImage.removeEventListener('click',hideImage)
-    prevImage.addEventListener('click',displayImage)
+  const hidePrevImage = prevImage => {
+    prevImage.removeEventListener('click', hideImage)
+    prevImage.addEventListener('click', displayImage)
 
-    const index = images.indexOf(prevImage)
+    const index = +prevImage.dataset.index
+    const { imgSize } = setting
 
-    // if (Math.floor(Math.random() * 2) === 1){
-    //   setVertRatioAndHoriRatio(imageArray[index])
-    //   setRandomAngleAndPosition(prevImage,imageArray[index])
-    // } else {
-    prevImage.style.transform = `rotate(${imageArray[index].angle}deg)`
-    prevImage.style.top = `${imageArray[index].topPos}`
-    prevImage.style.left = `${imageArray[index].leftPos}`
-    prevImage.style.height = `${imgSize * imageArray[index].vertRatio + aspectKey}`
-    prevImage.style.width = `${imgSize * imageArray[index].horiRatio + aspectKey}`
-    // }
+    setStyles({
+      target: prevImage,
+      w: imgSize * imgData[index].horiRatio + aspectKey, // TODO doo we need to convert to string?
+      h: imgSize * imgData[index].vertRatio + aspectKey,
+      y: imgData[index].topPos,
+      x: imgData[index].leftPos,
+      deg: imgData[index].angle,
+    })
     
     prevImage.classList.remove('pick')
     prevImage.classList.remove('z1')
@@ -211,8 +172,9 @@ function init() {
 
   // window.addEventListener('resize', reset)
   window.addEventListener('resize', reposition)
-  
+  checkOrientation()
   setUp()
+  
 }
 
 window.addEventListener('DOMContentLoaded', init)
