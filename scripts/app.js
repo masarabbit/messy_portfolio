@@ -17,6 +17,7 @@ function init() {
   ]
 
   const portfolio = document.querySelector('.portfolio')
+  // const indicator = document.querySelector('.indicator')
 
   const setting = {
     imgSize: 30,
@@ -27,14 +28,15 @@ function init() {
     greaterW: null,
     vertRatio: 1,
     horiRatio: 1,
-    currentImg: null,
+    imgIndex: null,
   }
 
   const checkOrientation = () =>{
     screenAspect = window.innerHeight > window.innerWidth ? 'vertical' : 'horizontal'
     aspectKey = screenAspect === 'vertical' ? 'vw' : 'vh'
   }
-
+  
+  const isActive = target => target.classList.contains('pick')
   const randomPos = () => `${Math.floor(Math.random() * 70)}%`
   const randomAngle = () => Math.floor(Math.random() * 360)
   const isNum = x => typeof x === 'number'
@@ -61,21 +63,23 @@ function init() {
     setting.horiRatio = isVert ? 1 : w / h
   }
 
-  const setRandomAngleAndPosition = (image, obj) => {
+  const setRandomAngleAndPosition = (img, obj) => {
     obj.angle = randomAngle()
     obj.topPos = randomPos()
     obj.leftPos = randomPos()
 
     const { imgSize, vertRatio, horiRatio, aspectKey } = setting
+
+    // TODO set max image size?
+
     setStyles({
-      target: image,
+      target: img,
       h: `${imgSize * vertRatio + aspectKey}`,
       w: `${imgSize * horiRatio + aspectKey}`,
       y: obj.topPos,
       x: obj.leftPos,
       deg: obj.angle
     })
-    image.classList.add('z1')
   }
   
   const createImage = (obj, index) => {
@@ -91,7 +95,7 @@ function init() {
 
   const setUp = () => {
     imgData.forEach((img, i) => createImage(img, i))
-    setting.images.forEach(img => img.addEventListener('click', displayImage))
+    setting.images.forEach(img => img.addEventListener('click', hideOrDisplayImage))
   }
 
   const reposition = () => {
@@ -103,77 +107,57 @@ function init() {
     })
   }
 
-  const displayImage = e => {    
-    // TODO replace this bit using currentImg value
-    if (document.querySelector('.pick')){
-      const prevImage = document.querySelector('.pick')
-      hidePrevImage(prevImage)
-    }
-    
-    setting.currentImg = e.target.dataset.index
-    const { innerHeight: h, innerWidth: w } = window
-    const isHorizontal = screenAspect === 'horizontal'
-
-    setting.greaterH = isHorizontal 
-      ? h - 50 
-      : (w - 20) * (e.target.height / e.target.width)
-  
-    setting.greaterW = isHorizontal 
-      ? (h - 50) * (e.target.width / e.target.height)
-      : w - 20
-      
-    setStyles({
-      target: e.target.parentNode,
-      w: px(setting.greaterW),
-      h: px(setting.greaterH),
-      y: px((h - setting.greaterH) / 2),
-      x: px((w - setting.greaterW) / 2),
-      deg: 0,
-    })
-    
+  const hideOrDisplayImage = e => {
+    const { images, imgIndex } = setting
     e.target.parentNode.classList.add('pick')
-    e.target.parentNode.removeEventListener('click', displayImage)
-    e.target.parentNode.addEventListener('click', hideImage)
+
+    if (isNum(imgIndex)){
+      if (isActive(images[imgIndex])) hideImage(imgIndex)
+      images[imgIndex].classList.remove('pick')
+    }
+
+    if (isActive(e.target.parentNode)) {
+      setting.imgIndex = +e.target.dataset.index
+      displayImage(e)
+    } 
+  }
+
+  const displayImage = e => {    
+      const { innerHeight: h, innerWidth: w } = window
+      const isHorizontal = screenAspect === 'horizontal'
+
+      
+      // TODO set max image size?
+      // TODO maybe set maximum window size, and ensure the image fits it.
+  
+      setting.greaterH = isHorizontal 
+        ? h - 50 
+        : (w - 20) * (e.target.height / e.target.width)
+    
+      setting.greaterW = isHorizontal 
+        ? (h - 50) * (e.target.width / e.target.height)
+        : w - 20
+        
+      setStyles({
+        target: e.target.parentNode,
+        w: px(setting.greaterW),
+        h: px(setting.greaterH),
+        y: px((h - setting.greaterH) / 2),
+        x: px((w - setting.greaterW) / 2),
+        deg: 0,
+      })
   }
 
 
-  const hideImage = e => {
-    e.target.parentNode.removeEventListener('click', hideImage)
-    e.target.parentNode.addEventListener('click', displayImage)
-
-    const img = imgData[+e.target.dataset.index]
-    setVertRatioAndHoriRatio(img)
-    setRandomAngleAndPosition(e.target.parentNode, img)
-
-    e.target.parentNode.classList.remove('pick')
-    e.target.parentNode.classList.remove('z1')
+  const hideImage = index => {
+    setVertRatioAndHoriRatio(imgData[index])
+    setRandomAngleAndPosition(setting.images[index], imgData[index])
   }
   
-
-  const hidePrevImage = prevImage => {
-    prevImage.removeEventListener('click', hideImage)
-    prevImage.addEventListener('click', displayImage)
-
-    const index = +prevImage.dataset.index
-    const { imgSize } = setting
-
-    setStyles({
-      target: prevImage,
-      w: imgSize * imgData[index].horiRatio + aspectKey, // TODO doo we need to convert to string?
-      h: imgSize * imgData[index].vertRatio + aspectKey,
-      y: imgData[index].topPos,
-      x: imgData[index].leftPos,
-      deg: imgData[index].angle,
-    })
-    
-    prevImage.classList.remove('pick')
-    prevImage.classList.remove('z1')
-  }
-
-  // window.addEventListener('resize', reset)
   window.addEventListener('resize', reposition)
   checkOrientation()
   setUp()
+  console.log(imgData)
   
 }
 

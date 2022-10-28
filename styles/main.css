@@ -1,5 +1,4 @@
 body {
-  /* background-image: url('../assets/wood.jpg'); */
   background-color: #81d8d0;
   margin: 0;
   padding: 0;
@@ -16,7 +15,6 @@ img {
   width: 90vw;
   background-color: transparent;
   overflow: hidden;
-  /* border:1px solid hotpink; */
 }
 
 .portfolio {
@@ -41,6 +39,7 @@ img {
 
 .image_thumb:hover{
   /* background-color: hotpink; */
+  cursor: pointer;
   filter: sepia(0%) brightness(100%) hue-rotate(0deg);
 }
 
@@ -79,21 +78,9 @@ opacity:0.4;
   z-index: 999;
 }
 
-/* .cover {
-  position:fixed;
-  top:0px;
-  display: none;
-  height: 100%;
-  width: 100%;
-  padding: 0;
-  margin: 0;
-  background-color:rgba(255,50,50,0.5)
+.indicator {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  color: white;
 }
-
-.cover.display {
-  display: flex;
-  z-index:9;
-  justify-content: center;
-  align-items: center;
-} */
-
