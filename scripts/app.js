@@ -16,8 +16,12 @@ function init() {
     { h: 750, w: 500, img: 'bunny_icecream2.jpg' }
   ]
 
-  const portfolio = document.querySelector('.portfolio')
-  // const indicator = document.querySelector('.indicator')
+  const elements = {
+    portfolio: document.querySelector('.portfolio'),
+    indicator: document.querySelector('.indicator'),
+    sortButton: document.querySelector('.sort')
+  }
+
 
   const setting = {
     imgSize: 30,
@@ -42,12 +46,13 @@ function init() {
   const isNum = x => typeof x === 'number'
   const px = num => `${num}px`
 
-  const setStyles = ({ target, h, w, x, y, deg }) =>{
+  const setStyles = ({ target, h, w, x, y, deg, z }) =>{
     if (h) target.style.height = h
     if (w) target.style.width = w
     if (y) target.style.top = y
     if (x) target.style.left = x
     if (isNum(deg)) target.style.transform = `rotate(${deg}deg)`
+    if (z) target.style.zIndex = z
   }
 
   const alt = imgName => {
@@ -89,7 +94,7 @@ function init() {
     newImg.innerHTML = `<img data-index="${index}" src= "./assets/${obj.img}" alt="${alt(obj.img)}">`
     setRandomAngleAndPosition(newImg, obj)
     
-    portfolio.appendChild(newImg)
+    elements.portfolio.appendChild(newImg)
     setting.images.push(newImg)
   }
 
@@ -157,7 +162,26 @@ function init() {
   window.addEventListener('resize', reposition)
   checkOrientation()
   setUp()
-  console.log(imgData)
+
+  elements.sortButton.addEventListener('click', ()=> {
+    console.log('sort')
+    const cards = document.querySelectorAll('.image_thumb')
+
+    const x = 20
+    const y = 20
+    let z = 900
+    // need to set size
+    cards.forEach((card, i) => {
+      setStyles({
+        target: card,
+        x: px(x * (i + 1)),
+        y: px(y * (i + 1)),
+        deg: 0,
+        z: z++
+      })
+    })
+
+  })
   
 }
 
