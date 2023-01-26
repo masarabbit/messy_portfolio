@@ -24,7 +24,7 @@ img {
   overflow: hidden;
 }
 
-.image_thumb { 
+.card { 
   position:absolute;
   transition:0.4s;
   width: var(--width);
@@ -37,18 +37,12 @@ img {
   z-index: var(--z);
 }
 
-/* .image_thumb.display {
-  width: var(--display-width);
-  height: var(--display-height);
-} */
-
-.image_thumb:hover{
-  /* background-color: hotpink; */
+.card:hover{
   cursor: pointer;
   filter: sepia(0%) brightness(100%) hue-rotate(0deg);
 }
 
-.image_thumb.pick {
+.card.pick {
   background-color: transparent; 
   opacity:1;
   filter: sepia(0%) brightness(100%) hue-rotate(0deg);
@@ -60,8 +54,8 @@ img {
   z-index: var(--display-z);
 }
 
-.image_thumb.stack {
-  opacity:1;
+.card.stack {
+  opacity: 1;
   filter: sepia(0%) brightness(100%) hue-rotate(0deg);
   /* width: var(--stack-width);
   height: var(--stack-height); */
@@ -71,11 +65,26 @@ img {
   z-index: var(--stack-z);
 }
 
+.card.stack { 
+  width: 200px;
+  height: 300px;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.card.stack > img {
+  width: var(--width);
+  height: var(--height);
+}
+
 .pick:hover {
   filter: sepia(0%) brightness(100%) hue-rotate(0deg);
 }
 
-.pick img:hover,.image_thumb img:hover { 
+.pick img:hover,.card img:hover { 
   opacity: 1;
 }
 
@@ -83,7 +92,7 @@ img {
   z-index: 1;
 }
 
-.image_thumb:hover{
+.card:hover{
   z-index: 2;
 }
 
@@ -105,6 +114,6 @@ img {
   z-index: 999;
 }
 
-.image_thumb.stack:hover{
+.card.stack:hover{
   z-index: 9999;
 }

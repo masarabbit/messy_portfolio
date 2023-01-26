@@ -33,6 +33,7 @@ function init() {
     vertRatio: 1,
     horiRatio: 1,
     imgIndex: null,
+    stack: false,
   }
 
   const checkOrientation = () =>{
@@ -46,14 +47,14 @@ function init() {
   const isNum = x => typeof x === 'number'
   const px = num => `${num}px`
 
-  const setStyles = ({ target, h, w, x, y, deg, z }) =>{
-    if (h) target.style.height = h
-    if (w) target.style.width = w
-    if (y) target.style.top = y
-    if (x) target.style.left = x
-    if (isNum(deg)) target.style.transform = `rotate(${deg}deg)`
-    if (z) target.style.zIndex = z
-  }
+  // const setStyles = ({ target, h, w, x, y, deg, z }) =>{
+  //   if (h) target.style.height = h
+  //   if (w) target.style.width = w
+  //   if (y) target.style.top = y
+  //   if (x) target.style.left = x
+  //   if (isNum(deg)) target.style.transform = `rotate(${deg}deg)`
+  //   if (z) target.style.zIndex = z
+  // }
 
   const setProperty = (target, property, value, prefix) => {
     target.style.setProperty(`--${prefix ? `${prefix}-` : ''}${property}`, value)
@@ -103,7 +104,7 @@ function init() {
   const createImage = (obj, index) => {
     const newImg = document.createElement('div')
     setVertRatioAndHoriRatio(obj)
-    newImg.classList.add('image_thumb')
+    newImg.classList.add('card')
     newImg.innerHTML = `<img data-index="${index}" src= "./assets/${obj.img}" alt="${alt(obj.img)}">`
     setRandomAngleAndPosition(newImg, obj)
     
@@ -113,7 +114,7 @@ function init() {
 
   const setUp = () => {
     imgData.forEach((img, i) => createImage(img, i))
-    setting.images.forEach(img => img.addEventListener('click', hideOrDisplayImage))
+    setting.images.forEach(img => img.addEventListener('click', triggerCardAction))
   }
 
   const reposition = () => {
@@ -140,11 +141,19 @@ function init() {
     } 
   }
 
+  const triggerCardAction = e => {
+    if (setting.stack) {
+      console.log('test')
+      // TODO display clicked card out of stack
+    } else {
+      hideOrDisplayImage(e)
+    }
+  }
+
   const displayImage = e => {    
       const { innerHeight: h, innerWidth: w } = window
       const isHorizontal = screenAspect === 'horizontal'
 
-      
       // TODO set max image size?
       // TODO maybe set maximum window size, and ensure the image fits it.
   
@@ -178,9 +187,9 @@ function init() {
   setUp()
 
   elements.stackButton.addEventListener('click', ()=> {
-    console.log('stack')
-    const cards = document.querySelectorAll('.image_thumb')
-
+    setting.stack = !setting.stack
+    const cards = document.querySelectorAll('.card')
+    
     const x = 20
     const y = 20
     let z = 900
