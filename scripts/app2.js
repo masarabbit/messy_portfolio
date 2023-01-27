@@ -37,8 +37,8 @@ function init() {
   }
 
   const checkOrientation = () =>{
-    screenAspect = window.innerHeight > window.innerWidth ? 'vertical' : 'horizontal'
-    aspectKey = screenAspect === 'vertical' ? 'vw' : 'vh'
+    setting.screenAspect = window.innerHeight > window.innerWidth ? 'vertical' : 'horizontal'
+    setting.aspectKey = setting.screenAspect === 'vertical' ? 'vw' : 'vh'
   }
   
   const isActive = target => target.classList.contains('pick')
@@ -87,7 +87,7 @@ function init() {
     obj.topPos = randomPos()
     obj.leftPos = randomPos()
 
-    const { imgSize, vertRatio, horiRatio, aspectKey } = setting
+    const { imgSize, vertRatio, horiRatio, aspectKey, screenAspect } = setting
 
     // TODO set max image size?
 
@@ -98,6 +98,31 @@ function init() {
       y: obj.topPos,
       x: obj.leftPos,
       deg: obj.angle,
+    })
+
+    //////////////
+    const { innerHeight: h, innerWidth: w } = window
+    const isHorizontal = screenAspect === 'horizontal'
+
+    // TODO set max image size?
+    // TODO maybe set maximum window size, and ensure the image fits it.
+
+    setting.greaterH = isHorizontal 
+      ? h - 50 
+      : (w - 20) * ((imgSize * vertRatio) / (imgSize * horiRatio))
+  
+    setting.greaterW = isHorizontal 
+      ? (h - 50) * ((imgSize * horiRatio) / (imgSize * vertRatio))
+      : w - 20
+      
+    setProperties({
+      target: img,
+      w: px(setting.greaterW),
+      h: px(setting.greaterH),
+      y: px((h - setting.greaterH) / 2),
+      x: px((w - setting.greaterW) / 2),
+      deg: 0,
+      prefix: 'display'
     })
   }
   
@@ -151,29 +176,29 @@ function init() {
   }
 
   const displayImage = e => {    
-      const { innerHeight: h, innerWidth: w } = window
-      const isHorizontal = screenAspect === 'horizontal'
+    const { innerHeight: h, innerWidth: w } = window
+    const isHorizontal = setting.screenAspect === 'horizontal'
 
-      // TODO set max image size?
-      // TODO maybe set maximum window size, and ensure the image fits it.
+    // TODO set max image size?
+    // TODO maybe set maximum window size, and ensure the image fits it.
+
+    setting.greaterH = isHorizontal 
+      ? h - 50 
+      : (w - 20) * (e.target.height / e.target.width)
   
-      setting.greaterH = isHorizontal 
-        ? h - 50 
-        : (w - 20) * (e.target.height / e.target.width)
-    
-      setting.greaterW = isHorizontal 
-        ? (h - 50) * (e.target.width / e.target.height)
-        : w - 20
-        
-      setProperties({
-        target: e.target.parentNode,
-        w: px(setting.greaterW),
-        h: px(setting.greaterH),
-        y: px((h - setting.greaterH) / 2),
-        x: px((w - setting.greaterW) / 2),
-        deg: 0,
-        prefix: 'display'
-      })
+    setting.greaterW = isHorizontal 
+      ? (h - 50) * (e.target.width / e.target.height)
+      : w - 20
+      
+    setProperties({
+      target: e.target.parentNode,
+      w: px(setting.greaterW),
+      h: px(setting.greaterH),
+      y: px((h - setting.greaterH) / 2),
+      x: px((w - setting.greaterW) / 2),
+      deg: 0,
+      prefix: 'display'
+    })
   }
 
 
