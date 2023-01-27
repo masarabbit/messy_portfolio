@@ -1,6 +1,4 @@
 
-//! setting z-index explicitly will overwrite anything done in css...
-
 function init() {
   
   const imgData = [
@@ -26,6 +24,7 @@ function init() {
   const setting = {
     imgSize: 30,
     images: [],
+    sortedImages: [],
     screenAspect: 'horizontal',
     aspectKey: 'vh',
     greaterH: null,
@@ -46,15 +45,6 @@ function init() {
   const randomAngle = () => Math.floor(Math.random() * 360)
   const isNum = x => typeof x === 'number'
   const px = num => `${num}px`
-
-  // const setStyles = ({ target, h, w, x, y, deg, z }) =>{
-  //   if (h) target.style.height = h
-  //   if (w) target.style.width = w
-  //   if (y) target.style.top = y
-  //   if (x) target.style.left = x
-  //   if (isNum(deg)) target.style.transform = `rotate(${deg}deg)`
-  //   if (z) target.style.zIndex = z
-  // }
 
   const setProperty = (target, property, value, prefix) => {
     target.style.setProperty(`--${prefix ? `${prefix}-` : ''}${property}`, value)
@@ -83,38 +73,32 @@ function init() {
   }
 
   const setRandomAngleAndPosition = (img, obj) => {
-    obj.angle = randomAngle()
-    obj.topPos = randomPos()
-    obj.leftPos = randomPos()
-
     const { imgSize, vertRatio, horiRatio, aspectKey, screenAspect } = setting
-
-    // TODO set max image size?
+    const imgHeight = imgSize * vertRatio
+    const imgWidth = imgSize * horiRatio
 
     setProperties({
       target: img,
-      h: imgSize * vertRatio + aspectKey,
-      w: imgSize * horiRatio + aspectKey,
-      y: obj.topPos,
-      x: obj.leftPos,
-      deg: obj.angle,
+      h: imgHeight + aspectKey,
+      w: imgWidth + aspectKey,
+      y: randomPos(),
+      x: randomPos(),
+      deg: randomAngle(),
     })
 
-    //////////////
+    // set card display position
     const { innerHeight: h, innerWidth: w } = window
     const isHorizontal = screenAspect === 'horizontal'
-
     // TODO set max image size?
     // TODO maybe set maximum window size, and ensure the image fits it.
 
     setting.greaterH = isHorizontal 
       ? h - 50 
-      : (w - 20) * ((imgSize * vertRatio) / (imgSize * horiRatio))
+      : (w - 20) * (imgHeight / imgWidth)
   
     setting.greaterW = isHorizontal 
-      ? (h - 50) * ((imgSize * horiRatio) / (imgSize * vertRatio))
-      : w - 20
-      
+      ? (h - 50) * (imgWidth / imgHeight)
+      : w - 20   
     setProperties({
       target: img,
       w: px(setting.greaterW),
@@ -130,6 +114,7 @@ function init() {
     const newImg = document.createElement('div')
     setVertRatioAndHoriRatio(obj)
     newImg.classList.add('card')
+    newImg.dataset.index = index
     newImg.innerHTML = `<img data-index="${index}" src= "./assets/${obj.img}" alt="${alt(obj.img)}">`
     setRandomAngleAndPosition(newImg, obj)
     
@@ -139,7 +124,28 @@ function init() {
 
   const setUp = () => {
     imgData.forEach((img, i) => createImage(img, i))
+    setting.sortedImages = [...setting.images]
     setting.images.forEach(img => img.addEventListener('click', triggerCardAction))
+  }
+
+  const positionSortedCards = () => {
+    const { innerHeight: h, innerWidth: w } = window
+    const defaultX = (w - 200) / 2
+    const defaultY = (h - 300) / 2
+    const x = 20
+    const y = 20
+    let z = 900
+    
+    setting.sortedImages.forEach((card, i) => {
+      setProperties({
+        target: card,
+        x: px(defaultX - x * (setting.images.length - i)),
+        y: px(defaultY - y * (setting.images.length - i)),
+        deg: 0,
+        z: z++,
+        prefix: 'stack'
+      })
+    })
   }
 
   const reposition = () => {
@@ -149,58 +155,50 @@ function init() {
       setVertRatioAndHoriRatio(img)
       setRandomAngleAndPosition(setting.images[i], img)
     })
+
+    positionSortedCards()
   }
 
   const hideOrDisplayImage = e => {
     const { images, imgIndex } = setting
+    setting.images.forEach(card => card.classList.remove('pick'))
     e.target.parentNode.classList.add('pick')
 
-    if (isNum(imgIndex)){
-      if (isActive(images[imgIndex])) hideImage(imgIndex)
-      images[imgIndex].classList.remove('pick')
+    if (isNum(imgIndex) && isActive(images[imgIndex])) {
+      hideImage(imgIndex)
+      e.target.parentNode.classList.remove('pick')
+      setting.imgIndex = null
     }
 
     if (isActive(e.target.parentNode)) {
       setting.imgIndex = +e.target.dataset.index
-      displayImage(e)
     } 
   }
 
   const triggerCardAction = e => {
     if (setting.stack) {
-      console.log('test')
-      // TODO display clicked card out of stack
+
+      const selectedCard = setting.images.find(card => card.dataset.index === e.target.dataset.index)
+      const otherCards = setting.sortedImages.filter(card => card.dataset.index !== e.target.dataset.index)
+      const { left, top } = selectedCard.getBoundingClientRect()
+
+      setting.sortedImages = [selectedCard,...otherCards]
+      positionSortedCards()
+      setProperties({
+        target: selectedCard,
+        x: px(left),
+        y: px(top),
+        z: 900 + setting.images.length,
+        prefix: 'prev-stack'
+      })
+      selectedCard.classList.add('spin_to_the_back')
+      setTimeout(()=> {
+        selectedCard.classList.remove('spin_to_the_back')
+      }, 800)
     } else {
       hideOrDisplayImage(e)
     }
   }
-
-  const displayImage = e => {    
-    const { innerHeight: h, innerWidth: w } = window
-    const isHorizontal = setting.screenAspect === 'horizontal'
-
-    // TODO set max image size?
-    // TODO maybe set maximum window size, and ensure the image fits it.
-
-    setting.greaterH = isHorizontal 
-      ? h - 50 
-      : (w - 20) * (e.target.height / e.target.width)
-  
-    setting.greaterW = isHorizontal 
-      ? (h - 50) * (e.target.width / e.target.height)
-      : w - 20
-      
-    setProperties({
-      target: e.target.parentNode,
-      w: px(setting.greaterW),
-      h: px(setting.greaterH),
-      y: px((h - setting.greaterH) / 2),
-      x: px((w - setting.greaterW) / 2),
-      deg: 0,
-      prefix: 'display'
-    })
-  }
-
 
   const hideImage = index => {
     setVertRatioAndHoriRatio(imgData[index])
@@ -210,27 +208,13 @@ function init() {
   window.addEventListener('resize', reposition)
   checkOrientation()
   setUp()
+  reposition()
 
   elements.stackButton.addEventListener('click', ()=> {
     setting.stack = !setting.stack
-    const cards = document.querySelectorAll('.card')
-    
-    const x = 20
-    const y = 20
-    let z = 900
-    // need to set size
-    cards.forEach((card, i) => {
+    setting.sortedImages.forEach(card => {
       card.classList.toggle('stack')
-      setProperties({
-        target: card,
-        x: px(x * (i + 1)),
-        y: px(y * (i + 1)),
-        deg: 0,
-        z: z++,
-        prefix: 'stack'
-      })
     })
-
   })
   
 }
