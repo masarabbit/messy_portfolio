@@ -15,18 +15,13 @@ img {
   overflow: hidden;
   width: 100%;
   height: 100%;
-  /* border: 1px solid yellow; */
 }
 
 .wrapper {
   width: 100%;
   height: 100%;
   background-color: transparent;
-  /* overflow: hidden; */
   position: absolute;
-  /* bottom: 0;
-  right: 0; */
-  /* border: 1px solid white; */
 }
 
 .portfolio {
@@ -39,7 +34,6 @@ img {
 .card { 
   position: absolute;
   transition: 0.4s;
-  /* transition: 4s; */
   width: var(--width);
   height: var(--height);
   top: var(--top);
@@ -48,12 +42,7 @@ img {
   overflow: hidden;
   transform: rotate(var(--deg));
   z-index: var(--z);
-  /* pointer-events: none; */
 }
-
-/* .card > img {
-  pointer-events: auto;
-} */
 
 .card:hover{
   cursor: pointer;
@@ -70,14 +59,11 @@ img {
   left: var(--display-left);
   transform: rotate(var(--display-deg));
   z-index: var(--display-z);
-  /* border: 1px solid yellow; */
 }
 
 .card.stack {
   opacity: 1;
   filter: sepia(0%) brightness(100%) hue-rotate(0deg);
-  /* width: var(--stack-width);
-  height: var(--stack-height); */
   top: var(--stack-top);
   left: var(--stack-left);
   transform: rotate(var(--stack-deg));
@@ -87,7 +73,6 @@ img {
 .card.stack { 
   width: 200px;
   height: 300px;
-  /* background-color: rgba(0, 0, 0, 0.6); */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -95,8 +80,6 @@ img {
 }
 
 .card.stack > img {
-  /* width: var(--width);
-  height: var(--height); */
   height: 300px;
   width: auto;
 }
@@ -136,13 +119,12 @@ img {
 }
 
 .card.stack:hover{
-  z-index: 9999;
+  z-index: 99999;
 }
 
 .spin_to_the_back {
   animation: forwards spin-back 0.7s;
 }
-
 
 @keyframes spin-back {
   0% {
@@ -154,9 +136,6 @@ img {
   20% {
     left: calc(var(--prev-stack-left) + 50px);
   }
-  /* 50% {
-    transform: rotate(360deg);
-  } */
   70% {
     top: -200px;
     left: calc(var(--stack-left) * 0.4);
