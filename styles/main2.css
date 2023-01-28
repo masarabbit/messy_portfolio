@@ -96,7 +96,7 @@ img {
   z-index: 1;
 }
 
-.card:hover{
+.card:not(.stack):hover{
   z-index: 2;
 }
 
@@ -118,22 +118,19 @@ img {
   /* z-index: 999; */
 }
 
-
-
-/* @media(hover: hover) and (pointer: fine) {
-  .card.stack:not(.spin_to_the_back):hover{
-    z-index: 99999;
-  }
-} */
-
-.card.stack.hover {
-  z-index: 99999;
-  /* opacity: 0.5; */
+@media(hover: hover) and (pointer: fine) {
+  .card.stack.peek{
+    transform: rotate(-10deg) translateX(-150px);
+  } 
 }
 
+
+
+
+
 .spin_to_the_back {
-  animation: forwards spin-back 0.7s;
-  pointer-events: none !important;
+  animation: forwards spin-back calc(0.7s + var(--prev-stack-delay));
+  animation-delay: --var(--prev-stack-delay);
 }
 
 @keyframes spin-back {

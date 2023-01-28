@@ -1,5 +1,9 @@
 
 function init() {
+
+  // TODO add drag?
+  // TODO add reshuffle
+  // TODO add shift to grid?
   
   const imgData = [
     { h: 200, w: 200, img: 'mochimochiusagi.gif' },
@@ -50,13 +54,14 @@ function init() {
     target.style.setProperty(`--${prefix ? `${prefix}-` : ''}${property}`, value)
   }
 
-  const setProperties = ({ target, h, w, x, y, deg, z, prefix }) => {
+  const setProperties = ({ target, h, w, x, y, deg, z, prefix, delay }) => {
     if (h) setProperty(target, 'height', h, prefix)
     if (w) setProperty(target, 'width', w, prefix)
     if (y) setProperty(target, 'top', y, prefix)
     if (x) setProperty(target, 'left', x, prefix)
     if (isNum(deg)) setProperty(target, 'deg', `${deg}deg`, prefix)
     if (z) setProperty(target, 'z', z, prefix)
+    if (isNum(delay)) setProperty(target, 'delay', `${delay}s`, prefix)
   }
 
   const alt = imgName => {
@@ -122,19 +127,28 @@ function init() {
     setting.images.push(newImg)
   }
 
+  const peek = (img, action) => {
+    const selectedCardIndex = setting.sortedImages.indexOf(img)
+    if (action === 'add' && selectedCardIndex !== setting.sortedImages.length - 1) {
+      img.classList.add('peek')
+    } else {
+      img.classList.remove('peek')
+    }
+  }
+
   const setUp = () => {
     imgData.forEach((img, i) => createImage(img, i))
     setting.sortedImages = [...setting.images]
     setting.images.forEach(img => img.addEventListener('click', triggerCardAction))
     ;['mouseenter', 'touchstart'].forEach(action => {
       setting.images.forEach(img => img.addEventListener(action, () => {
-        img.classList.add('hover')
+        peek(img, 'add')
       }))
     })
 
     ;['mouseleave', 'touchend'].forEach(action => {
       setting.images.forEach(img => img.addEventListener(action, () => {
-        img.classList.remove('hover')
+        peek(img, 'remove')
       }))
     })
   }
@@ -186,12 +200,14 @@ function init() {
     } 
   }
 
-  const triggerCardAction = e => {
-    if (setting.stack) {
-      const selectedCard = setting.images.find(card => card.dataset.index === e.target.dataset.index)
-      const otherCards = setting.sortedImages.filter(card => card.dataset.index !== e.target.dataset.index)
-      const { left, top } = selectedCard.getBoundingClientRect()
+  const moveStackedCards = e => {
+    const selectedCard = setting.images.find(card => card.dataset.index === e.target.dataset.index)
+    const selectedCardIndex = setting.sortedImages.indexOf(selectedCard)
+    const { left, top } = selectedCard.getBoundingClientRect()
 
+    // move selected card to back
+    if (selectedCardIndex === setting.sortedImages.length - 1) {
+      const otherCards = setting.sortedImages.filter(card => card.dataset.index !== e.target.dataset.index)
       setting.sortedImages = [selectedCard,...otherCards]
       positionSortedCards()
       setProperties({
@@ -199,12 +215,42 @@ function init() {
         x: px(left),
         y: px(top),
         z: 900 + setting.images.length,
+        delay: 0,
         prefix: 'prev-stack'
       })
       selectedCard.classList.add('spin_to_the_back')
       setTimeout(()=> {
         selectedCard.classList.remove('spin_to_the_back')
       }, 800)
+
+      // move cards on top of selected card to the back
+    } else {
+      const cardsToMove = setting.sortedImages.filter((_card, i) => i > selectedCardIndex)
+      const otherCards = setting.sortedImages.filter((_card, i) => i <= selectedCardIndex)
+      setting.sortedImages = [...cardsToMove,...otherCards]
+      positionSortedCards()
+      cardsToMove.forEach((card, i) => {
+        const offset = i + 1
+        setProperties({
+          target: card,
+          x: px(left + (offset * 20)),
+          y: px(top + (offset * 20)),
+          z: 900 - offset,
+          delay: offset * 0.05,
+          prefix: 'prev-stack'
+        })
+      })
+      cardsToMove.forEach(card => card.classList.add('spin_to_the_back'))
+      setTimeout(()=> {
+        cardsToMove.forEach(card => card.classList.remove('spin_to_the_back'))
+      }, 800 + cardsToMove.length * 50)
+    }  
+  }
+
+  const triggerCardAction = e => {
+    setting.images.forEach(card => card.classList.remove('peek'))
+    if (setting.stack) {
+      moveStackedCards(e)
     } else {
       hideOrDisplayImage(e)
     }
