@@ -126,6 +126,17 @@ function init() {
     imgData.forEach((img, i) => createImage(img, i))
     setting.sortedImages = [...setting.images]
     setting.images.forEach(img => img.addEventListener('click', triggerCardAction))
+    ;['mouseenter', 'touchstart'].forEach(action => {
+      setting.images.forEach(img => img.addEventListener(action, () => {
+        img.classList.add('hover')
+      }))
+    })
+
+    ;['mouseleave', 'touchend'].forEach(action => {
+      setting.images.forEach(img => img.addEventListener(action, () => {
+        img.classList.remove('hover')
+      }))
+    })
   }
 
   const positionSortedCards = () => {
@@ -177,7 +188,6 @@ function init() {
 
   const triggerCardAction = e => {
     if (setting.stack) {
-
       const selectedCard = setting.images.find(card => card.dataset.index === e.target.dataset.index)
       const otherCards = setting.sortedImages.filter(card => card.dataset.index !== e.target.dataset.index)
       const { left, top } = selectedCard.getBoundingClientRect()
