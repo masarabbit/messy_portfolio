@@ -115,15 +115,16 @@ img {
   position: absolute;
   bottom: 50px;
   right: 50px;
-  z-index: 999;
+  /* z-index: 999; */
 }
 
-.card.stack:hover{
+.card.stack:not(.spin_to_the_back):hover{
   z-index: 99999;
 }
 
 .spin_to_the_back {
   animation: forwards spin-back 0.7s;
+  user-select: none;
 }
 
 @keyframes spin-back {
