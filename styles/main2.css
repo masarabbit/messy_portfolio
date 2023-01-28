@@ -8,6 +8,7 @@ body {
 img {
   height: 100%;
   width: 100%;
+  /* pointer-events: none; */
 }
 
 .outer_wrapper {
@@ -124,7 +125,9 @@ img {
   } 
 }
 
-
+.card.drag {
+  transition: 0s;
+}
 
 
 
@@ -142,6 +145,7 @@ img {
   }
   20% {
     left: calc(var(--prev-stack-left) + 50px);
+    z-index: var(--stack-z);
   }
   70% {
     top: -200px;
