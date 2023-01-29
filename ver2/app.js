@@ -47,7 +47,6 @@ function init() {
   const client = (e, type) => e.type[0] === 'm' ? e[`client${type}`] : e.touches[0][`client${type}`]
   const roundedClient = (e, type) => Math.round(client(e, type))
   const shuffledArray = array => [...array.sort(() => 0.5 - Math.random())]
-
   const isStackMode = () => ['stack', 'single_stack'].includes(setting.mode)
 
   const setProperty = (target, property, value, prefix) => {
@@ -89,7 +88,7 @@ function init() {
           target: target,
           x: px(newX), y: px(newY),
         })
-      } else if (isStackMode() && overBuffer({ a:newX, b: target.offsetLeft, buffer: 30 })) {
+      } else if (isStackMode() && overBuffer({ a:newX, b: target.offsetLeft, buffer: 20 })) {
         // swipe stacked cards
         document.querySelector(`.${newX > target.offsetLeft ? 'next_btn' : 'prev_btn'}`).click()
         setting.navigating = true

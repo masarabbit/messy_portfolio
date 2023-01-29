@@ -387,14 +387,9 @@ nav {
   left: var(--left);
 }
 
-/* nav button {
-  opacity: 0.3;
+.portfolio.grid nav {
+  display: none;
 }
-
-nav button:hover {
-  opacity: 1;
-} */
-
 
 .sign {
   position: absolute;
