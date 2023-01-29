@@ -218,18 +218,19 @@ img {
 
 /* this will have images maybe */
 button {
+  --button-height: 4px;
   border-width: 0px;
   background-color: white;
   margin: 4px;
   padding: 4px;
   border-radius: 8px;
   width: 40px;
-  height: 40px;
+  height: calc(40px + var(--button-height));
   image-rendering: pixelated;
   background-position: 4px;
   background-repeat: no-repeat !important;
   background-size: 32px !important; 
-  border-bottom-width: 4px;
+  border-bottom-width: var(--button-height);
   border-color: black;
   cursor: pointer;
 }
@@ -240,13 +241,15 @@ button.selected {
 
 button.disabled {
   opacity: 0.5;
-  border-bottom-width: 0;
   cursor: auto;
 }
 
+button.disabled,
 button.selected,
 button:hover {
+  height: 40px;
   border-bottom-width: 0;
+  margin-top: calc(4px + var(--button-height));
 }
 
 .shuffle_btn {
