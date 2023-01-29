@@ -1,4 +1,7 @@
-* { box-sizing: border-box; }
+* { 
+  box-sizing: border-box; 
+  user-select: none;
+}
 
 body {
   background-color: #81d8d0;
@@ -134,14 +137,34 @@ img {
   z-index: var(--display-z);
 }
 
-.portfolio.stack:not(.grid) .card {
+.portfolio.stack:not(.grid) .card:not(.pick) {
   top: var(--stack-top);
   left: var(--stack-left);
   transform: rotate(var(--stack-deg));
   z-index: var(--stack-z);
 }
 
-.portfolio.stack:not(.grid) .card { 
+.portfolio.stack:not(.grid) .card:not(.pick).hide_from_pick {
+  animation: forwards 0.4s hide-from-pick;
+}
+
+@keyframes hide-from-pick {
+  0% {
+    width: var(--display-width);
+    height: var(--display-height);
+    top: var(--display-top);
+    left: var(--display-left);
+  }
+  100% {
+    top: var(--stack-top);
+    left: var(--stack-left);
+    width: 200px;
+    height: 300px;
+  }
+}
+
+
+.portfolio.stack:not(.grid) .card:not(.pick) { 
   width: 200px;
   height: 300px;
   display: flex;
@@ -150,7 +173,7 @@ img {
   overflow: hidden;
 }
 
-.portfolio.stack:not(.grid) .card > img {
+.portfolio.stack:not(.grid) .card:not(.pick):not(.hide_from_pick) > img {
   height: 300px;
   width: auto;
 }
@@ -208,6 +231,30 @@ img {
   }
 }
 
+.spin_to_the_front {
+  animation: forwards spin-front calc(0.7s);
+}
+
+@keyframes spin-front {
+  0% {
+    top: var(--prev-stack-top);
+    left: var(--prev-stack-left);
+    transform: rotate(0deg);
+    z-index: var(--prev-stack-z);
+  }
+  50% {
+    top: -30%;
+    left: -10%;
+    z-index: var(--stack-z);
+  }
+  100% {
+    top: var(--stack-top);
+    left: var(--stack-left);
+    transform: rotate(-360deg);
+    z-index: var(--stack-z);
+  }
+}
+
 .button_wrapper {
   position: fixed;
   bottom: 50px;
@@ -218,38 +265,31 @@ img {
 
 /* this will have images maybe */
 button {
-  --button-height: 4px;
-  border-width: 0px;
-  background-color: white;
-  margin: 4px;
-  padding: 4px;
-  border-radius: 8px;
-  width: 40px;
-  height: calc(40px + var(--button-height));
+  border: 0px;
+  background-color: transparent;
+  margin: 8px;
+  width: 32px;
+  height: 32px;
   image-rendering: pixelated;
-  background-position: 4px;
   background-repeat: no-repeat !important;
   background-size: 32px !important; 
-  border-bottom-width: var(--button-height);
-  border-color: black;
   cursor: pointer;
-}
-
-button.selected {
   filter: invert();
 }
 
-button.disabled {
-  opacity: 0.5;
-  cursor: auto;
+button:hover,
+button.selected {
+  filter: invert(0);
 }
 
-button.disabled,
-button.selected,
 button:hover {
-  height: 40px;
-  border-bottom-width: 0;
-  margin-top: calc(4px + var(--button-height));
+  opacity: 0.5;
+}
+
+button.disabled {
+  transition: 0.4s;
+  opacity: 0;
+  cursor: auto;
 }
 
 .shuffle_btn {
@@ -270,6 +310,15 @@ button:hover {
 
 .scatter_btn {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAARZJREFUWEe1V8sSAyEIY///o9uxU3dYq+aB3UsvkISIYK/4z/eKiIuBpoIYoBTTyPsH8WFAgZwSgQTQVkZErnzUveTZCVCs3JFvnVgJmAEqsauT+8GYgSpWMpVvj2MUwAD2HCYWOpEFKIDHRFSAKrl3YzYQpfLVeToYnwKOVPFVpYi4j97tgYoTj8Z3bgGacso1nm4sy8pBFT3IKtON2SNwIbG7ANm+GjhwmSlV5Gq6xSgfbnMGYNyK4/kyGEshKLlbmH9nYAjHEoAqd/vikVe5BUecUN8DsKnY1zC6n8owKjnhzoFjTqDudZ1AuPwfB+O9QJPn9wCylHVCIlcEtFgkQiZXBexEWOSOgJkIm9wVkEWUyBvQG5veMyFFekG6AAAAAElFTkSuQmCC);
+}
+
+.prev_btn,
+.next_btn {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAKZJREFUWEfd1UkKwCAMBdB4/0O3CC24y59EWrfV/OdAM+rwGIfz61OAqyoPZk5gAuZg1rQ3zBR7AVGECoghHEAE4QJsRAJgIVIAGZEESIg0gEbsAFCIXQAYsRMAIX4NgDYHTXpa2tqMui4H14UnVhUKYGpSvR0BUOHQK13OugPQ4UmAFJ4CyOEJgBXuAuxwBxAJVwGxcAUQDWcB3e9X+h7fEas4DrgB2MQaIfd0dGsAAAAASUVORK5CYII=);
+}
+
+.prev_btn {
+  transform: scale(-1, 1)
 }
 
 .display_card {
@@ -318,6 +367,33 @@ button:hover {
     opacity: 0;
   }
 }
+
+nav {
+  transition: 0.4s;
+  position: absolute;
+  width: 80px;
+  height: 48px;
+  display: flex;
+  opacity: 0;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+}
+
+.portfolio.stack nav {
+  opacity: 1;
+  pointer-events: auto;
+  top: var(--top);
+  left: var(--left);
+}
+
+/* nav button {
+  opacity: 0.3;
+}
+
+nav button:hover {
+  opacity: 1;
+} */
 
 
 .sign {
