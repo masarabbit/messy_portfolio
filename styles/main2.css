@@ -1,59 +1,117 @@
+* { box-sizing: border-box; }
+
 body {
-  background-color: #0b2f3d;
+  background-color: #81d8d0;
   margin: 0;
   padding: 0;
-  overflow:hidden;
+  font-family: sans-serif;
 }
 
 img {
   height: 100%;
   width: 100%;
-  /* pointer-events: none; */
-}
-
-.outer_wrapper {
-  position: absolute;
-  overflow: hidden;
-  width: 100%;
-  height: 100%;
 }
 
 .wrapper {
+  position: absolute;
   width: 100%;
   height: 100%;
   background-color: transparent;
-  position: absolute;
+  overflow: hidden;
 }
 
 .portfolio {
+  position: absolute;
   height: 100%;
   width: 100%;
   background-color:transparent;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .card { 
   position: absolute;
   transition: 0.4s;
+  border-radius: 8px;
   width: var(--width);
   height: var(--height);
   top: var(--top);
   left: var(--left);
-  border-radius: 8px;
-  overflow: hidden;
   transform: rotate(var(--deg));
   z-index: var(--z);
+  overflow: hidden;
 }
 
-.card:hover{
+/* grid ------------ */
+.portfolio.grid {
+  height: auto;
+  width: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  padding: 10px;
+}
+
+.portfolio.grid > .card:not(.pick) {
+  position: relative;
+  transform: none;
+  top: 0;
+  left: 0;
+  margin: 4px;
+  width: 100px;
+  height: 100px;
+  z-index: 0;
+  animation: grid-display forwards 0.4s;
+}
+
+.portfolio.grid > .card {
+  transition: 0s;
+}
+
+/*
+.portfolio.grid > .card.pick {
+  animation: display forwards 0.4s;
+} */
+
+@keyframes grid-display {
+  0% { 
+    transform: scale(10); 
+    opacity: 0;
+  }
+  100% { 
+    transform: scale(1); 
+    opacity: 1;
+  }
+}
+
+/* @keyframes display {
+  0% { transform: scale(0); }
+  100% { transform: scale(1); }
+} */
+
+.portfolio.grid .card:not(.pick) > img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
+}
+
+.portfolio.grid .card:not(.pick) > img.vert {
+  width: 100px;
+  height: auto;
+}
+
+.portfolio.grid .card:not(.pick) > img.hori {
+  height: 100px;
+  width: auto;
+}
+
+/* grid ------------ */
+
+.card:hover {
   cursor: pointer;
-  filter: sepia(0%) brightness(100%) hue-rotate(0deg);
 }
 
 .card.pick {
-  background-color: transparent; 
-  opacity:1;
-  filter: sepia(0%) brightness(100%) hue-rotate(0deg);
   width: var(--display-width);
   height: var(--display-height);
   top: var(--display-top);
@@ -62,16 +120,14 @@ img {
   z-index: var(--display-z);
 }
 
-.card.stack {
-  opacity: 1;
-  filter: sepia(0%) brightness(100%) hue-rotate(0deg);
+.portfolio:not(.grid) .card.stack {
   top: var(--stack-top);
   left: var(--stack-left);
   transform: rotate(var(--stack-deg));
   z-index: var(--stack-z);
 }
 
-.card.stack { 
+.portfolio:not(.grid) .card.stack { 
   width: 200px;
   height: 300px;
   display: flex;
@@ -80,21 +136,9 @@ img {
   overflow: hidden;
 }
 
-.card.stack > img {
+.portfolio:not(.grid) .card.stack > img {
   height: 300px;
   width: auto;
-}
-
-.pick:hover {
-  filter: sepia(0%) brightness(100%) hue-rotate(0deg);
-}
-
-.pick img:hover,.card img:hover { 
-  opacity: 1;
-}
-
-.z1{
-  z-index: 1;
 }
 
 .card:not(.stack):hover{
@@ -112,13 +156,6 @@ img {
   color: white;
 }
 
-.stack {
-  position: absolute;
-  bottom: 50px;
-  right: 50px;
-  /* z-index: 999; */
-}
-
 @media(hover: hover) and (pointer: fine) {
   .card.stack.peek{
     transform: rotate(-10deg) translateX(-150px);
@@ -129,11 +166,8 @@ img {
   transition: 0s;
 }
 
-
-
 .spin_to_the_back {
   animation: forwards spin-back calc(0.7s + var(--prev-stack-delay));
-  animation-delay: --var(--prev-stack-delay);
 }
 
 @keyframes spin-back {
@@ -157,4 +191,86 @@ img {
     transform: rotate(360deg);
     z-index: var(--stack-z);
   }
+}
+
+.button_wrapper {
+  position: absolute;
+  bottom: 50px;
+  right: 20px;
+  display: flex;
+  z-index: 99999;
+}
+
+/* this will have images maybe */
+button {
+  border: 0px;
+  background-color: white;
+  border-radius: 8px;
+  margin: 4px;
+  padding: 4px 8px;
+}
+
+.display_clone {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 8px;
+}
+.display_clone.display {
+  animation: forwards 0.4s display-clone;
+}
+.display_clone.display.hide {
+  animation: forwards 0.4s hide-clone;
+}
+
+@keyframes display-clone {
+  0% {
+    top: var(--grid-display-top);
+    left: var(--grid-display-left);
+    width: 100px;
+    height: 100px;
+    opacity: 0;
+  }
+  100% {
+    top: var(--display-top);
+    left: var(--display-left);
+    width: var(--display-width);
+    height: var(--display-height);
+    opacity: 1;
+  }
+}
+
+
+@keyframes hide-clone {
+  0% {
+    top: var(--display-top);
+    left: var(--display-left);
+    width: var(--display-width);
+    height: var(--display-height);
+    opacity: 1;
+  }
+  100% {
+    top: var(--grid-display-top);
+    left: var(--grid-display-left);
+    width: 100px;
+    height: 100px;
+    opacity: 0;
+  }
+}
+
+
+.sign {
+  position: absolute;
+  color: white;
+  bottom: 10px;
+  right: 10px;
+  font-size: 10px;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
 }

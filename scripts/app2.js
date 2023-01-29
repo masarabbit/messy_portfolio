@@ -1,17 +1,15 @@
 
 function init() {
-  // TODO add reshuffle
-  // TODO add shift to grid?
-  // TODO refactor inconsistency (img vs card)
+  // TODO add shift to grid? in which case, what to do with display
   
   const imgData = [
-    { h: 200, w: 200, img: 'mochimochiusagi.gif' },
+    { h: 500, w: 500, img: 'mochimochiusagi.gif' },
     { h: 634, w: 450, img: 'popcorn_bunny.png' },
-    { h: 264, w: 200, img: 'cocoala.jpg' },
-    { h: 200, w: 200, img: 'smile.gif' },
+    { h: 1320, w: 1000, img: 'cocoala.jpg' },
+    { h: 500, w: 500, img: 'smile.gif' },
     { h: 660, w: 450, img: 'rhino_banana.jpg' },
-    { h: 282, w: 200, img: 'icecream.jpg' },
-    { h: 200, w: 200, img: 'boxing_bunny.gif' },
+    { h: 634, w: 450, img: 'icecream.jpg' },
+    { h: 500, w: 500, img: 'boxing_bunny.gif' },
     { h: 562, w: 800, img: 'pizza_squirrel.jpg' },
     { h: 1414, w: 1000, img: 'animals.jpg' },
     { h: 750, w: 500, img: 'bunny_icecream2.jpg' }
@@ -20,7 +18,8 @@ function init() {
   const elements = {
     portfolio: document.querySelector('.portfolio'),
     indicator: document.querySelector('.indicator'),
-    stackButton: document.querySelector('.stack')
+    buttons: document.querySelectorAll('button'),
+    displayClone: document.querySelector('.display_clone')
   }
 
   const setting = {
@@ -29,15 +28,14 @@ function init() {
     sortedImages: [],
     screenAspect: 'horizontal',
     aspectKey: 'vh',
-    greaterH: null,
-    greaterW: null,
     vertRatio: 1,
     horiRatio: 1,
     imgIndex: null,
-    stack: false,
     offsetX: 20,
     offsetY: 20,
+    isStacked: false,
     isDragging: false,
+    isGrid: false,
   }
 
   const isActive = target => target.classList.contains('pick')
@@ -48,6 +46,7 @@ function init() {
   const px = num => `${num}px`
   const client = (e, type) => e.type[0] === 'm' ? e[`client${type}`] : e.touches[0][`client${type}`]
   const roundedClient = (e, type) => Math.round(client(e, type))
+  const shuffledArray = array => [...array.sort((a, b) => 0.5 - Math.random())]
 
   const setProperty = (target, property, value, prefix) => {
     target.style.setProperty(`--${prefix ? `${prefix}-` : ''}${property}`, value)
@@ -90,12 +89,11 @@ function init() {
     }
   }
 
-
   const addDragAction = target =>{
     const pos = { a: 0, b: 0, c: 0, d: 0 }
     
     const onGrab = e =>{
-      if (!setting.stack) {
+      if (!setting.isStacked && !setting.isGrid) {
         pos.c = roundedClient(e, 'X')
         pos.d = roundedClient(e, 'Y')  
         mouse.up(document, 'add', onLetGo)
@@ -132,80 +130,101 @@ function init() {
   }
   
 
-
   const alt = imgName => {
     let alt = imgName
     ;['.jpg', '.gif', '.png'].forEach(l => alt = alt.replace(l, ''))
     return alt.replace('_', ' ')
   }
 
-  const setVertRatioAndHoriRatio = obj =>{
-    const { h, w } = obj
+  const ratio = data =>{
+    const { h, w } = data
     const isVert = h >= w
-    setting.vertRatio = isVert ? h / w : 1
-    setting.horiRatio = isVert ? 1 : w / h
+
+    return { 
+      vertRatio: isVert ? h / w : 1,
+      horiRatio: isVert ? 1 : w / h
+    }
   }
 
-  const setRandomAngleAndPosition = img => {
-    const { imgSize, vertRatio, horiRatio, aspectKey, screenAspect } = setting
+  const setCardDisplayPosition = (card, data) => {
+    const { imgSize, screenAspect } = setting
+    const { vertRatio, horiRatio } = ratio(data)
+    const imgHeight = imgSize * vertRatio
+    const imgWidth = imgSize * horiRatio
+
+    // set card display position
+    const { innerHeight: h, innerWidth: w } = window
+    const isHorizontal = screenAspect === 'horizontal'
+    let cardWidth
+    let cardHeight
+
+    if (isHorizontal) {
+      cardWidth = (h - 50) * (imgWidth / imgHeight)
+      // adjust if wider than screen
+      cardWidth = cardWidth > w ? w - 20 : cardWidth
+      // adjust if bigger than asset
+      cardWidth = cardWidth > data.w ? data.w : cardWidth
+      cardHeight = cardWidth * (imgHeight / imgWidth)
+    } else {
+      cardHeight = (w - 20) * (imgHeight / imgWidth)
+      // adjust if taller than screen
+      cardHeight = cardHeight > h ? h - 50 : cardHeight
+      // adjust if bigger than asset
+      cardHeight = cardHeight > data.h ? data.h : cardHeight
+      cardWidth = cardHeight * (imgWidth / imgHeight)
+    }
+
+    setProperties({
+      target: card,
+      w: px(cardWidth),
+      h: px(cardHeight),
+      x: px((w - cardWidth) / 2),
+      y: px((h - cardHeight) / 2),
+      z: 1,
+      deg: 0,
+      prefix: 'display'
+    })
+  }
+
+  const setRandomAngleAndPosition = (card, data) => {
+    const { imgSize, aspectKey } = setting
+    const { vertRatio, horiRatio } = ratio(data)
     const imgHeight = imgSize * vertRatio
     const imgWidth = imgSize * horiRatio
 
     setProperties({
-      target: img,
+      target: card,
       w: imgWidth + aspectKey,
       h: imgHeight + aspectKey,
       x: randomPos(), y: randomPos(),
       deg: randomAngle(),
     })
-
-    // set card display position
-    const { innerHeight: h, innerWidth: w } = window
-    const isHorizontal = screenAspect === 'horizontal'
-    // TODO set max image size?
-    // TODO maybe set maximum window size, and ensure the image fits it.
-
-    setting.greaterH = isHorizontal 
-      ? h - 50 
-      : (w - 20) * (imgHeight / imgWidth)
-  
-    setting.greaterW = isHorizontal 
-      ? (h - 50) * (imgWidth / imgHeight)
-      : w - 20   
-    setProperties({
-      target: img,
-      w: px(setting.greaterW),
-      h: px(setting.greaterH),
-      x: px((w - setting.greaterW) / 2),
-      y: px((h - setting.greaterH) / 2),
-      deg: 0,
-      prefix: 'display'
-    })
+    
+    setCardDisplayPosition(card, data)
   }
   
-  const createImage = (obj, index) => {
+  const createCard = (data, index) => {
     const newImg = document.createElement('div')
-    setVertRatioAndHoriRatio(obj)
     newImg.classList.add('card')
     newImg.dataset.index = index
-    newImg.innerHTML = `<img data-index="${index}" src= "./assets/${obj.img}" alt="${alt(obj.img)}">`
-    setRandomAngleAndPosition(newImg)
+    newImg.innerHTML = `<img class="${data.h > data.w ? 'vert' : 'hori'}" data-index="${index}" src= "./assets/${data.img}" alt="${alt(data.img)}">`
+    setRandomAngleAndPosition(newImg, data)
     
     elements.portfolio.appendChild(newImg)
     setting.images.push(newImg)
   }
 
-  const peek = (img, action) => {
-    const selectedCardIndex = setting.sortedImages.indexOf(img)
-    if (action === 'add' && selectedCardIndex !== setting.sortedImages.length - 1) {
-      img.classList.add('peek')
+  const peek = (card, action) => {
+    const selectedCardIndex = setting.sortedImages.indexOf(card)
+    if (action === 'add' && selectedCardIndex !== setting.sortedImages.length - 1 && !setting.isGrid) {
+      card.classList.add('peek')
     } else {
-      img.classList.remove('peek')
+      card.classList.remove('peek')
     }
   }
 
   const setUp = () => {
-    imgData.forEach((img, i) => createImage(img, i))
+    imgData.forEach((img, i) => createCard(img, i))
     setting.sortedImages = [...setting.images]
     setting.images.forEach(img => {
       img.addEventListener('click', triggerCardAction)
@@ -236,9 +255,8 @@ function init() {
   const reposition = () => {
     checkOrientation()
 
-    imgData.forEach((img, i) => {
-      setVertRatioAndHoriRatio(img)
-      setRandomAngleAndPosition(setting.images[i], img)
+    imgData.forEach((data, i) => {
+      setRandomAngleAndPosition(setting.images[i], data)
     })
 
     positionStackedCards()
@@ -275,7 +293,7 @@ function init() {
       setProperties({
         target: selectedCard,
         x: px(left), y: px(top),
-        z: 900 + setting.images.length,
+        z: 9900 + setting.images.length,
         delay: 0,
         prefix: 'prev-stack'
       })
@@ -308,9 +326,44 @@ function init() {
     }  
   }
 
+  const closeDisplayClone = () => {
+    elements.displayClone.classList.add('hide')
+    setTimeout(()=> {
+      elements.displayClone.innerHTML = null
+      ;['display','hide'].forEach(className => elements.displayClone.classList.remove(className))    
+    }, 400)
+  }
+
+  const displayDisplayClone = e => {
+    const data = imgData[+e.target.dataset.index]
+    elements.displayClone.innerHTML = `<img src= "./assets/${data.img}" alt="${alt(data.img)}">`
+
+    const { left, top } = e.target.parentNode.getBoundingClientRect()
+    setProperties({
+      target: elements.displayClone,
+      x: px(left),
+      y: px(top),
+      z: 999,
+      prefix: 'grid-display'
+    })
+
+    setCardDisplayPosition(elements.displayClone, data)
+    elements.displayClone.classList.add('display')
+  }
+
   const triggerCardAction = e => {
     setting.images.forEach(card => card.classList.remove('peek'))
-    if (setting.stack) {
+
+    if (setting.isGrid) {
+      if (elements.displayClone.innerHTML) {
+        closeDisplayClone()
+        setTimeout(()=> {
+          displayDisplayClone(e)
+        }, 400)
+      } else {
+        displayDisplayClone(e)
+      }
+    } else if (setting.isStacked && !setting.isGrid) {
       moveStackedCards(e)
     } else {
       hideOrDisplayImage(e)
@@ -318,7 +371,6 @@ function init() {
   }
 
   const hideImage = index => {
-    setVertRatioAndHoriRatio(imgData[index])
     setRandomAngleAndPosition(setting.images[index], imgData[index])
   }
   
@@ -327,10 +379,29 @@ function init() {
   setUp()
   reposition()
 
-  elements.stackButton.addEventListener('click', ()=> {
-    setting.stack = !setting.stack
-    setting.sortedImages.forEach(card => card.classList.toggle('stack'))
-    setting.images.forEach(card => card.classList.remove('pick'))
+  elements.displayClone.addEventListener('click', closeDisplayClone)
+  
+  const addClickEvent = (btn, className, event) => btn.classList.contains(className) && btn.addEventListener('click', event)
+  elements.buttons.forEach(btn => {
+    addClickEvent(btn, 'stack_btn', ()=> {
+      setting.isStacked = !setting.isStacked
+      setting.isGrid = false
+      elements.portfolio.classList.remove('grid')
+      setting.sortedImages.forEach(card => card.classList.toggle('stack'))
+      setting.images.forEach(card => card.classList.remove('pick'))
+    })
+    addClickEvent(btn, 'shuffle_btn', ()=> {
+      if (!setting.isGrid) {
+        if (setting.isStacked) setting.sortedImages = shuffledArray(setting.sortedImages)
+        reposition()
+      }
+    })
+    addClickEvent(btn, 'grid_btn', ()=> {
+      setting.isGrid = !setting.isGrid
+      setting.isStacked = false
+      elements.portfolio.classList.toggle('grid')
+      elements.displayClone.classList.remove('display')
+    })
   })
   
 }
