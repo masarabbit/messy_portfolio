@@ -120,14 +120,14 @@ img {
   z-index: var(--display-z);
 }
 
-.portfolio:not(.grid) .card.stack {
+.portfolio.stack:not(.grid) .card {
   top: var(--stack-top);
   left: var(--stack-left);
   transform: rotate(var(--stack-deg));
   z-index: var(--stack-z);
 }
 
-.portfolio:not(.grid) .card.stack { 
+.portfolio.stack:not(.grid) .card { 
   width: 200px;
   height: 300px;
   display: flex;
@@ -136,16 +136,16 @@ img {
   overflow: hidden;
 }
 
-.portfolio:not(.grid) .card.stack > img {
+.portfolio.stack:not(.grid) .card > img {
   height: 300px;
   width: auto;
 }
 
-.card:not(.stack):hover{
+.portfolio:not(.stack) .card:hover{
   z-index: 2;
 }
 
-.pick:not(.stack) {
+.portfolio:not(.stack) .pick {
   z-index: 9999;
 }
 
@@ -157,7 +157,7 @@ img {
 }
 
 @media(hover: hover) and (pointer: fine) {
-  .card.stack.peek{
+  .postfolio.stack .card.peek{
     transform: rotate(-10deg) translateX(-150px);
   } 
 }

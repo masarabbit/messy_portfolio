@@ -1,6 +1,5 @@
 
 function init() {
-  // TODO add shift to grid? in which case, what to do with display
   
   const imgData = [
     { h: 500, w: 500, img: 'mochimochiusagi.gif' },
@@ -33,9 +32,8 @@ function init() {
     imgIndex: null,
     offsetX: 20,
     offsetY: 20,
-    isStacked: false,
-    isDragging: false,
     isGrid: false,
+    mode: null,
   }
 
   const isActive = target => target.classList.contains('pick')
@@ -93,7 +91,7 @@ function init() {
     const pos = { a: 0, b: 0, c: 0, d: 0 }
     
     const onGrab = e =>{
-      if (!setting.isStacked && !setting.isGrid) {
+      if (!setting.mode) {
         pos.c = roundedClient(e, 'X')
         pos.d = roundedClient(e, 'Y')  
         mouse.up(document, 'add', onLetGo)
@@ -254,11 +252,7 @@ function init() {
 
   const reposition = () => {
     checkOrientation()
-
-    imgData.forEach((data, i) => {
-      setRandomAngleAndPosition(setting.images[i], data)
-    })
-
+    imgData.forEach((data, i) => setRandomAngleAndPosition(setting.images[i], data))
     positionStackedCards()
   }
 
@@ -354,7 +348,7 @@ function init() {
   const triggerCardAction = e => {
     setting.images.forEach(card => card.classList.remove('peek'))
 
-    if (setting.isGrid) {
+    if (setting.mode === 'grid') {
       if (elements.displayClone.innerHTML) {
         closeDisplayClone()
         setTimeout(()=> {
@@ -363,17 +357,50 @@ function init() {
       } else {
         displayDisplayClone(e)
       }
-    } else if (setting.isStacked && !setting.isGrid) {
+    } else if (setting.mode === 'stack') {
       moveStackedCards(e)
     } else {
       hideOrDisplayImage(e)
     }
   }
 
-  const hideImage = index => {
-    setRandomAngleAndPosition(setting.images[index], imgData[index])
+  const hideImage = index => setRandomAngleAndPosition(setting.images[index], imgData[index])
+  
+  const changeMode = mode => {
+    setting.mode = setting.mode === mode ? null : mode
+    elements.indicator.innerHTML = setting.mode
+  }
+
+  const toggleStackMode = () => {
+    changeMode('stack')
+    if (setting.mode === 'stack') {
+      elements.portfolio.classList.remove('grid')
+      if (elements.displayClone.innerHTML) closeDisplayClone()
+      elements.portfolio.classList.add('stack')
+      setting.images.forEach(card => card.classList.remove('pick'))
+    } else {
+      elements.portfolio.classList.remove('stack')
+    }
+  }
+
+  const shuffleCards = () => {
+    if (setting.mode !== 'grid') {
+      if (setting.mode === 'stack') setting.sortedImages = shuffledArray(setting.sortedImages)
+      reposition()
+    }
   }
   
+  const toggleGridMode = () => {
+    changeMode('grid')
+    if (setting.mode === 'grid') {
+      elements.portfolio.classList.add('grid')
+      setting.images.forEach(card => card.classList.remove('pick'))
+    } else {
+      elements.portfolio.classList.remove('grid')
+    }
+    if (elements.displayClone.innerHTML) closeDisplayClone()
+  }
+
   window.addEventListener('resize', reposition)
   checkOrientation()
   setUp()
@@ -383,25 +410,9 @@ function init() {
   
   const addClickEvent = (btn, className, event) => btn.classList.contains(className) && btn.addEventListener('click', event)
   elements.buttons.forEach(btn => {
-    addClickEvent(btn, 'stack_btn', ()=> {
-      setting.isStacked = !setting.isStacked
-      setting.isGrid = false
-      elements.portfolio.classList.remove('grid')
-      setting.sortedImages.forEach(card => card.classList.toggle('stack'))
-      setting.images.forEach(card => card.classList.remove('pick'))
-    })
-    addClickEvent(btn, 'shuffle_btn', ()=> {
-      if (!setting.isGrid) {
-        if (setting.isStacked) setting.sortedImages = shuffledArray(setting.sortedImages)
-        reposition()
-      }
-    })
-    addClickEvent(btn, 'grid_btn', ()=> {
-      setting.isGrid = !setting.isGrid
-      setting.isStacked = false
-      elements.portfolio.classList.toggle('grid')
-      elements.displayClone.classList.remove('display')
-    })
+    addClickEvent(btn, 'stack_btn', toggleStackMode)
+    addClickEvent(btn, 'shuffle_btn', shuffleCards)
+    addClickEvent(btn, 'grid_btn', toggleGridMode)
   })
   
 }
