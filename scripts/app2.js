@@ -256,6 +256,7 @@ function init() {
     checkOrientation()
     imgData.forEach((data, i) => setRandomAngleAndPosition(setting.images[i], data))
     positionStackedCards()
+    if (setting.selectedData) setCardDisplayPosition(elements.displayCard, setting.selectedData)
   }
 
   const hideOrDisplayImage = e => {
@@ -331,7 +332,6 @@ function init() {
   }
 
   const displayDisplayCard = e => {
-    if (window.innerWidth < 300) return
     const data = imgData[+e.target.dataset.index]
     elements.displayCard.innerHTML = `<img src= "./assets/${data.img}" alt="${alt(data.img)}">`
 
@@ -343,7 +343,7 @@ function init() {
       z: 999,
       prefix: 'grid-display'
     })
-
+    setting.selectedData = data
     setCardDisplayPosition(elements.displayCard, data)
     elements.displayCard.classList.add('display')
   }
