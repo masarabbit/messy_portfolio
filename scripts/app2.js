@@ -377,7 +377,7 @@ function init() {
     elements.buttons.forEach(btn => btn.classList.remove('selected'))
     if (mode) {
       document.querySelector(`.${mode}_btn`).classList[setting.mode === mode ? 'add' : 'remove']('selected')
-      if (mode === 'grid') document.querySelector('.shuffle_btn').classList[setting.mode === mode ? 'add' : 'remove']('disabled')
+      document.querySelector('.shuffle_btn').classList[setting.mode === 'grid' ? 'add' : 'remove']('disabled')
     }
     if (!setting.mode) document.querySelector('.scatter_btn').classList.add('selected')
   }
