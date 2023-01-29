@@ -1,5 +1,7 @@
 
 function init() {
+
+  // TODO maybe gris could be improved further
   
   const imgData = [
     { h: 500, w: 500, img: 'mochimochiusagi.gif' },
@@ -16,9 +18,9 @@ function init() {
 
   const elements = {
     portfolio: document.querySelector('.portfolio'),
-    indicator: document.querySelector('.indicator'),
     buttons: document.querySelectorAll('button'),
-    displayClone: document.querySelector('.display_clone')
+    displayCard: document.querySelector('.display_card'),
+    // indicator: document.querySelector('.indicator')
   }
 
   const setting = {
@@ -32,7 +34,7 @@ function init() {
     imgIndex: null,
     offsetX: 20,
     offsetY: 20,
-    isGrid: false,
+    isDragging: false,
     mode: null,
   }
 
@@ -44,7 +46,7 @@ function init() {
   const px = num => `${num}px`
   const client = (e, type) => e.type[0] === 'm' ? e[`client${type}`] : e.touches[0][`client${type}`]
   const roundedClient = (e, type) => Math.round(client(e, type))
-  const shuffledArray = array => [...array.sort((a, b) => 0.5 - Math.random())]
+  const shuffledArray = array => [...array.sort(() => 0.5 - Math.random())]
 
   const setProperty = (target, property, value, prefix) => {
     target.style.setProperty(`--${prefix ? `${prefix}-` : ''}${property}`, value)
@@ -320,44 +322,45 @@ function init() {
     }  
   }
 
-  const closeDisplayClone = () => {
-    elements.displayClone.classList.add('hide')
+  const closeDisplayCard = () => {
+    elements.displayCard.classList.add('hide')
     setTimeout(()=> {
-      elements.displayClone.innerHTML = null
-      ;['display','hide'].forEach(className => elements.displayClone.classList.remove(className))    
+      elements.displayCard.innerHTML = null
+      ;['display','hide'].forEach(className => elements.displayCard.classList.remove(className))    
     }, 400)
   }
 
-  const displayDisplayClone = e => {
+  const displayDisplayCard = e => {
+    if (window.innerWidth < 300) return
     const data = imgData[+e.target.dataset.index]
-    elements.displayClone.innerHTML = `<img src= "./assets/${data.img}" alt="${alt(data.img)}">`
+    elements.displayCard.innerHTML = `<img src= "./assets/${data.img}" alt="${alt(data.img)}">`
 
     const { left, top } = e.target.parentNode.getBoundingClientRect()
     setProperties({
-      target: elements.displayClone,
+      target: elements.displayCard,
       x: px(left),
       y: px(top),
       z: 999,
       prefix: 'grid-display'
     })
 
-    setCardDisplayPosition(elements.displayClone, data)
-    elements.displayClone.classList.add('display')
+    setCardDisplayPosition(elements.displayCard, data)
+    elements.displayCard.classList.add('display')
   }
 
   const triggerCardAction = e => {
     setting.images.forEach(card => card.classList.remove('peek'))
 
     if (setting.mode === 'grid') {
-      if (elements.displayClone.innerHTML) {
-        closeDisplayClone()
+      if (elements.displayCard.innerHTML) {
+        closeDisplayCard()
         setTimeout(()=> {
-          displayDisplayClone(e)
+          displayDisplayCard(e)
         }, 400)
       } else {
-        displayDisplayClone(e)
+        displayDisplayCard(e)
       }
-    } else if (setting.mode === 'stack') {
+    } else if (['stack', 'single_stack'].includes(setting.mode)) {
       moveStackedCards(e)
     } else {
       hideOrDisplayImage(e)
@@ -368,24 +371,35 @@ function init() {
   
   const changeMode = mode => {
     setting.mode = setting.mode === mode ? null : mode
-    elements.indicator.innerHTML = setting.mode
   }
 
-  const toggleStackMode = () => {
-    changeMode('stack')
-    if (setting.mode === 'stack') {
+  const updateSelectState = mode => {
+    elements.buttons.forEach(btn => btn.classList.remove('selected'))
+    if (mode) {
+      document.querySelector(`.${mode}_btn`).classList[setting.mode === mode ? 'add' : 'remove']('selected')
+      if (mode === 'grid') document.querySelector('.shuffle_btn').classList[setting.mode === mode ? 'add' : 'remove']('disabled')
+    }
+    if (!setting.mode) document.querySelector('.scatter_btn').classList.add('selected')
+  }
+
+  const toggleStackMode = mode => {
+    changeMode(mode)
+    if (['stack', 'single_stack'].includes(setting.mode)) {
+      ;['offsetX', 'offsetY'].forEach(key => setting[key] = mode === 'stack' ? 20 : 0)
+      positionStackedCards()
       elements.portfolio.classList.remove('grid')
-      if (elements.displayClone.innerHTML) closeDisplayClone()
+      if (elements.displayCard.innerHTML) closeDisplayCard()
       elements.portfolio.classList.add('stack')
       setting.images.forEach(card => card.classList.remove('pick'))
     } else {
       elements.portfolio.classList.remove('stack')
     }
+    updateSelectState(mode)
   }
 
   const shuffleCards = () => {
     if (setting.mode !== 'grid') {
-      if (setting.mode === 'stack') setting.sortedImages = shuffledArray(setting.sortedImages)
+      if (['stack', 'single_stack'].includes(setting.mode)) setting.sortedImages = shuffledArray(setting.sortedImages)
       reposition()
     }
   }
@@ -398,19 +412,28 @@ function init() {
     } else {
       elements.portfolio.classList.remove('grid')
     }
-    if (elements.displayClone.innerHTML) closeDisplayClone()
+    if (elements.displayCard.innerHTML) closeDisplayCard()
+    updateSelectState('grid')
   }
 
   window.addEventListener('resize', reposition)
   checkOrientation()
   setUp()
   reposition()
+  updateSelectState()
 
-  elements.displayClone.addEventListener('click', closeDisplayClone)
+  elements.displayCard.addEventListener('click', closeDisplayCard)
   
   const addClickEvent = (btn, className, event) => btn.classList.contains(className) && btn.addEventListener('click', event)
   elements.buttons.forEach(btn => {
-    addClickEvent(btn, 'stack_btn', toggleStackMode)
+    addClickEvent(btn, 'scatter_btn', ()=> {
+      setting.mode = null
+      updateSelectState()
+      ;['stack', 'grid'].forEach(className => elements.portfolio.classList.remove(className)) 
+      if (elements.displayCard.innerHTML) closeDisplayCard()
+    })
+    addClickEvent(btn, 'stack_btn', ()=> toggleStackMode('stack'))
+    addClickEvent(btn, 'single_stack_btn', ()=> toggleStackMode('single_stack'))
     addClickEvent(btn, 'shuffle_btn', shuffleCards)
     addClickEvent(btn, 'grid_btn', toggleGridMode)
   })
