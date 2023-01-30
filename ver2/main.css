@@ -1,6 +1,5 @@
 * { 
   box-sizing: border-box; 
-  user-select: none;
 }
 
 body {
@@ -8,6 +7,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  overscroll-behavior: contain;
 }
 
 img {
