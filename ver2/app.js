@@ -187,7 +187,7 @@ function init() {
       h: px(cardHeight),
       x: px((w - cardWidth) / 2),
       y: px((h - cardHeight) / 2),
-      z: 1,
+      z: 99999,
       deg: 0,
       prefix: 'display'
     })
@@ -248,10 +248,12 @@ function init() {
     let z = 900
     
     setting.sortedImages.forEach((card, i) => {
+      const { w, h } = imgData[card.dataset.index]
       setProperties({
         target: card,
         x: px(defaultX - setting.offsetX * (setting.images.length - i - 1)),
         y: px(defaultY - setting.offsetY * (setting.images.length - i - 1)),
+        w: px(300 * (w / h)),
         deg: 0,
         z: z++,
         prefix: 'stack'
@@ -282,13 +284,6 @@ function init() {
         hideImage(imgIndex)
         e.target.parentNode.classList.remove('pick')
         setting.imgIndex = null
-        if (isStackMode()) {
-          console.log('hide')
-          e.target.parentNode.classList.add('hide_from_pick')
-          setTimeout(()=> {
-            e.target.parentNode.classList.remove('hide_from_pick')
-          }, 400)
-        }
       }
   
       if (isActive(e.target.parentNode)) {
@@ -343,6 +338,7 @@ function init() {
       delay: 0,
       prefix: 'prev-stack'
     })
+
     currentCard.classList.add('spin_to_the_back')
     setTimeout(()=> {
       currentCard.classList.remove('spin_to_the_back')

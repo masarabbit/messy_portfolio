@@ -43,92 +43,15 @@ img {
   transform: rotate(var(--deg));
   z-index: var(--z);
   overflow: hidden;
-}
-
-/* grid ------------ */
-.portfolio.grid {
-  width: 100%;
-  height: auto;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  padding: 10px;
-  overflow: auto;
-  max-width: 1300px;
-  padding-top: 20px;
-}
-
-.portfolio.grid > .card {
-  --max-size: calc(50% - 12px);
-  transition: 0s;
-}
-
-@keyframes grid-display {
-  0% { transform: scale(0); }
-  100% { transform: scale(1); }
-}
-
-.portfolio.grid .card:not(.pick) > img {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); 
-}
-
-.portfolio.grid .card:not(.pick) > img.vert {
-  width: 100%;
-  height: auto;
-}
-
-.portfolio.grid .card:not(.pick) > img.hori {
-  height: 100%;
-  width: auto;
-}
-
-.portfolio.grid > .card:not(.pick) {
-  position: relative;
-  transform: none;
-  top: 0;
-  left: 0;
-  margin: 6px;
-  max-width: var(--max-size);
-  padding-top: var(--max-size);
-  width: 300px;
-  height: 0px;
-  z-index: 0 !important;
-  animation: grid-display forwards 0.4s;
-}
-
-.wrapper:has(.grid) {
-  overflow: auto;
-}
-
-@media (min-width: 300px) {
-  .portfolio.grid > .card {
-    --max-size: calc(100% / 3 - 12px);
-  }
-}
-
-@media (min-width: 600px) {
-  .portfolio.grid > .card {
-    --max-size: calc(100% / 6 - 12px);
-  }
-}
-
-@media (min-width: 1000px) {
-  .portfolio.grid > .card {
-    --max-size: calc(100% / 8 - 12px);
-  }
-}
-
-
-/* grid  end ------------ */
-
-.card:hover {
   cursor: pointer;
 }
 
-.card.pick {
+.card.drag {
+  transition: 0s;
+}
+
+.portfolio:not(.stack) .card.pick {
+  animation: forwards 0.4s display-card;
   width: var(--display-width);
   height: var(--display-height);
   top: var(--display-top);
@@ -137,34 +60,20 @@ img {
   z-index: var(--display-z);
 }
 
-.portfolio.stack:not(.grid) .card:not(.pick) {
+.indicator {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  color: white;
+}
+
+/* stack ------------ */
+
+.portfolio.stack .card {
   top: var(--stack-top);
   left: var(--stack-left);
   transform: rotate(var(--stack-deg));
   z-index: var(--stack-z);
-}
-
-.portfolio.stack:not(.grid) .card:not(.pick).hide_from_pick {
-  animation: forwards 0.4s hide-from-pick;
-}
-
-@keyframes hide-from-pick {
-  0% {
-    width: var(--display-width);
-    height: var(--display-height);
-    top: var(--display-top);
-    left: var(--display-left);
-  }
-  100% {
-    top: var(--stack-top);
-    left: var(--stack-left);
-    width: 200px;
-    height: 300px;
-  }
-}
-
-
-.portfolio.stack:not(.grid) .card:not(.pick) { 
   width: 200px;
   height: 300px;
   display: flex;
@@ -173,9 +82,22 @@ img {
   overflow: hidden;
 }
 
-.portfolio.stack:not(.grid) .card:not(.pick):not(.hide_from_pick) > img {
+.portfolio.stack .card.pick {
+  width: var(--display-width);
+  height: var(--display-height);
+  top: var(--display-top);
+  left: var(--display-left);
+}
+
+.portfolio.stack .card > img {
+  width: var(--stack-width);
   height: 300px;
-  width: auto;
+  transition: 0.4s;
+}
+
+.portfolio.stack .card.pick > img {
+  width: var(--display-width);
+  height: var(--display-height);
 }
 
 .portfolio:not(.stack) .card:hover{
@@ -187,12 +109,6 @@ img {
   z-index: 9999;
 }
 
-.indicator {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  color: white;
-}
 
 @media(hover: hover) and (pointer: fine) {
   .portfolio.stack:not(.grid) .card.peek{
@@ -200,15 +116,11 @@ img {
   } 
 }
 
-.card.drag {
-  transition: 0s;
-}
-
 .spin_to_the_back {
-  animation: forwards spin-back calc(0.6s + var(--prev-stack-delay));
+  animation: forwards spin-to-back calc(0.6s + var(--prev-stack-delay));
 }
 
-@keyframes spin-back {
+@keyframes spin-to-back {
   0% {
     top: var(--prev-stack-top);
     left: var(--prev-stack-left);
@@ -232,10 +144,10 @@ img {
 }
 
 .spin_to_the_front {
-  animation: forwards spin-front calc(0.6s);
+  animation: forwards spin-to-front calc(0.6s);
 }
 
-@keyframes spin-front {
+@keyframes spin-to-front {
   0% {
     top: var(--prev-stack-top);
     left: var(--prev-stack-left);
@@ -255,6 +167,8 @@ img {
   }
 }
 
+/* button ------------ */
+
 .button_wrapper {
   position: fixed;
   bottom: 50px;
@@ -263,7 +177,6 @@ img {
   z-index: 99999;
 }
 
-/* this will have images maybe */
 button {
   border: 0px;
   background-color: transparent;
@@ -312,6 +225,27 @@ button.disabled {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAARZJREFUWEe1V8sSAyEIY///o9uxU3dYq+aB3UsvkISIYK/4z/eKiIuBpoIYoBTTyPsH8WFAgZwSgQTQVkZErnzUveTZCVCs3JFvnVgJmAEqsauT+8GYgSpWMpVvj2MUwAD2HCYWOpEFKIDHRFSAKrl3YzYQpfLVeToYnwKOVPFVpYi4j97tgYoTj8Z3bgGacso1nm4sy8pBFT3IKtON2SNwIbG7ANm+GjhwmSlV5Gq6xSgfbnMGYNyK4/kyGEshKLlbmH9nYAjHEoAqd/vikVe5BUecUN8DsKnY1zC6n8owKjnhzoFjTqDudZ1AuPwfB+O9QJPn9wCylHVCIlcEtFgkQiZXBexEWOSOgJkIm9wVkEWUyBvQG5veMyFFekG6AAAAAElFTkSuQmCC);
 }
 
+/* nav ------------ */
+
+nav {
+  position: absolute;
+  display: flex;
+  width: 80px;
+  height: 48px;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  transition: 0.4s;
+  opacity: 0;
+}
+
+.portfolio.stack nav {
+  left: var(--left);
+  top: var(--top);
+  pointer-events: auto;
+  opacity: 1;
+}
+
 .prev_btn,
 .next_btn {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAKZJREFUWEfd1UkKwCAMBdB4/0O3CC24y59EWrfV/OdAM+rwGIfz61OAqyoPZk5gAuZg1rQ3zBR7AVGECoghHEAE4QJsRAJgIVIAGZEESIg0gEbsAFCIXQAYsRMAIX4NgDYHTXpa2tqMui4H14UnVhUKYGpSvR0BUOHQK13OugPQ4UmAFJ4CyOEJgBXuAuxwBxAJVwGxcAUQDWcB3e9X+h7fEas4DrgB2MQaIfd0dGsAAAAASUVORK5CYII=);
@@ -321,19 +255,102 @@ button.disabled {
   transform: scale(-1, 1)
 }
 
+/* grid ------------ */
+
+.portfolio.grid nav {
+  display: none;
+}
+
+.portfolio.grid {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  padding: 10px;
+  overflow: auto;
+  max-width: 1300px;
+  padding-top: 20px;
+}
+
+.portfolio.grid .card {
+  --max-size: calc(50% - 12px);
+  transition: 0s;
+}
+
+@keyframes grid-display {
+  0% { transform: scale(0); }
+  100% { transform: scale(1); }
+}
+
+.portfolio.grid .card > img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
+}
+
+.portfolio.grid .card > img.vert {
+  width: 100%;
+  height: auto;
+}
+
+.portfolio.grid .card > img.hori {
+  height: 100%;
+  width: auto;
+}
+
+.portfolio.grid .card {
+  position: relative;
+  transform: none;
+  top: 0;
+  left: 0;
+  margin: 6px;
+  max-width: var(--max-size);
+  padding-top: var(--max-size);
+  width: 300px;
+  height: 0px;
+  z-index: 0 !important;
+  animation: grid-display forwards 0.4s;
+}
+
+.wrapper:has(.grid) {
+  overflow: auto;
+}
+
+@media (min-width: 300px) {
+  .portfolio.grid .card {
+    --max-size: calc(100% / 3 - 12px);
+  }
+}
+
+@media (min-width: 600px) {
+  .portfolio.grid .card {
+    --max-size: calc(100% / 6 - 12px);
+  }
+}
+
+@media (min-width: 1000px) {
+  .portfolio.grid .card {
+    --max-size: calc(100% / 8 - 12px);
+  }
+}
+
 .display_card {
   position: absolute;
   overflow: hidden;
   border-radius: 8px;
 }
+
 .display_card.display {
-  animation: forwards 0.4s display-display-card;
+  animation: forwards 0.4s display-grid-display-card;
 }
+
 .display_card.display.hide {
-  animation: forwards 0.4s hide-display-card;
+  animation: forwards 0.4s hide-grid-display-card;
 }
 
-@keyframes display-display-card {
+@keyframes display-grid-display-card {
   0% {
     top: var(--grid-display-top);
     left: var(--grid-display-left);
@@ -351,7 +368,7 @@ button.disabled {
 }
 
 
-@keyframes hide-display-card {
+@keyframes hide-grid-display-card {
   0% {
     top: var(--display-top);
     left: var(--display-left);
@@ -368,28 +385,8 @@ button.disabled {
   }
 }
 
-nav {
-  transition: 0.4s;
-  position: absolute;
-  width: 80px;
-  height: 48px;
-  display: flex;
-  opacity: 0;
-  pointer-events: none;
-  top: 0;
-  left: 0;
-}
 
-.portfolio.stack nav {
-  opacity: 1;
-  pointer-events: auto;
-  top: var(--top);
-  left: var(--left);
-}
-
-.portfolio.grid nav {
-  display: none;
-}
+/* sign ------------ */
 
 .sign {
   position: absolute;
