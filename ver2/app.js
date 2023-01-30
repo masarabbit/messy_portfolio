@@ -347,7 +347,7 @@ function init() {
     setTimeout(()=> {
       currentCard.classList.remove('spin_to_the_back')
       setting.navigating = false
-    }, 800)
+    }, 700)
   }
 
   const spinLastCardToFront = () => {
@@ -370,7 +370,7 @@ function init() {
     setTimeout(()=> {
       lastCard.classList.remove('spin_to_the_front')
       setting.navigating = false
-    }, 800)
+    }, 700)
   }
 
   const closeDisplayCard = () => {

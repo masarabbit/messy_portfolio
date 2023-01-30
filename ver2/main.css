@@ -205,7 +205,7 @@ img {
 }
 
 .spin_to_the_back {
-  animation: forwards spin-back calc(0.7s + var(--prev-stack-delay));
+  animation: forwards spin-back calc(0.6s + var(--prev-stack-delay));
 }
 
 @keyframes spin-back {
@@ -232,7 +232,7 @@ img {
 }
 
 .spin_to_the_front {
-  animation: forwards spin-front calc(0.7s);
+  animation: forwards spin-front calc(0.6s);
 }
 
 @keyframes spin-front {
