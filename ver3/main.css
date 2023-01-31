@@ -111,7 +111,7 @@ img {
 
 
 @media(hover: hover) and (pointer: fine) {
-  .portfolio.stack .card.peek{
+  .portfolio.stack .card.peek:not(.pick){
     transform: rotate(-10deg) translateX(-150px);
   } 
 }
@@ -166,6 +166,54 @@ img {
     z-index: var(--stack-z);
   }
 }
+
+/* grid ------------ */
+
+.portfolio.grid nav {
+  display: none;
+}
+
+.portfolio.grid {
+  max-width: 1300px;
+}
+
+.portfolio.grid .card > img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
+}
+
+.portfolio.grid .card > img.vert {
+  width: 100%;
+  height: auto;
+}
+
+.portfolio.grid .card > img.hori {
+  height: 100%;
+  width: auto;
+}
+
+.portfolio.grid .card {
+  transform: none;
+  top: var(--grid-top);
+  left: var(--grid-left);
+  width: var(--grid-width);
+  height: var(--grid-height);
+  z-index: 0;
+}
+
+.wrapper.overflow {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.wrapper.overflow .portfolio {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+
 
 /* button ------------ */
 
@@ -253,136 +301,6 @@ nav {
 
 .prev_btn {
   transform: scale(-1, 1)
-}
-
-/* grid ------------ */
-
-.portfolio.grid nav {
-  display: none;
-}
-
-.portfolio.grid {
-  width: 100%;
-  height: auto;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  padding: 10px;
-  overflow: auto;
-  max-width: 1300px;
-  padding-top: 20px;
-}
-
-.portfolio.grid .card {
-  --max-size: calc(50% - 12px);
-  transition: 0s;
-}
-
-@keyframes grid-display {
-  0% { transform: scale(0); }
-  100% { transform: scale(1); }
-}
-
-.portfolio.grid .card > img {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); 
-}
-
-.portfolio.grid .card > img.vert {
-  width: 100%;
-  height: auto;
-}
-
-.portfolio.grid .card > img.hori {
-  height: 100%;
-  width: auto;
-}
-
-.portfolio.grid .card {
-  position: relative;
-  transform: none;
-  top: 0;
-  left: 0;
-  margin: 6px;
-  max-width: var(--max-size);
-  padding-top: var(--max-size);
-  width: 300px;
-  height: 0px;
-  z-index: 0 !important;
-  animation: grid-display forwards 0.4s;
-}
-
-.wrapper:has(.grid) {
-  overflow: auto;
-}
-
-@media (min-width: 300px) {
-  .portfolio.grid .card {
-    --max-size: calc(100% / 3 - 12px);
-  }
-}
-
-@media (min-width: 600px) {
-  .portfolio.grid .card {
-    --max-size: calc(100% / 6 - 12px);
-  }
-}
-
-@media (min-width: 1000px) {
-  .portfolio.grid .card {
-    --max-size: calc(100% / 8 - 12px);
-  }
-}
-
-.display_card {
-  position: absolute;
-  overflow: hidden;
-  border-radius: 8px;
-}
-
-.display_card.display {
-  animation: forwards 0.4s display-grid-display-card;
-}
-
-.display_card.display.hide {
-  animation: forwards 0.4s hide-grid-display-card;
-}
-
-@keyframes display-grid-display-card {
-  0% {
-    top: var(--grid-display-top);
-    left: var(--grid-display-left);
-    width: 100px;
-    height: 100px;
-    opacity: 0;
-  }
-  100% {
-    top: var(--display-top);
-    left: var(--display-left);
-    width: var(--display-width);
-    height: var(--display-height);
-    opacity: 1;
-  }
-}
-
-
-@keyframes hide-grid-display-card {
-  0% {
-    top: var(--display-top);
-    left: var(--display-left);
-    width: var(--display-width);
-    height: var(--display-height);
-    opacity: 1;
-  }
-  100% {
-    top: var(--grid-display-top);
-    left: var(--grid-display-left);
-    width: 100px;
-    height: 100px;
-    opacity: 0;
-  }
 }
 
 
