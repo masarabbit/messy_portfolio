@@ -1,6 +1,8 @@
 
 function init() {
 
+  // TODO consider moving nav position to left and right of page (and display when relevant)
+
   const imgData = [
     { h: 500, w: 500, img: 'mochimochiusagi.gif' },
     { h: 634, w: 450, img: 'popcorn_bunny.png' },
@@ -17,8 +19,8 @@ function init() {
   const elements = {
     portfolio: document.querySelector('.portfolio'),
     buttons: document.querySelectorAll('button'),
-    nav: document.querySelector('nav')
-    // indicator: document.querySelector('.indicator')
+    nav: document.querySelector('nav'),
+    indicator: document.querySelector('.indicator')
   }
 
   const setting = {
@@ -85,7 +87,7 @@ function init() {
 
       if (overBuffer({ a:newX, b: target.offsetLeft, buffer: 20 }) && document.querySelector('.pick')) { 
         document.querySelector(`.${newX > target.offsetLeft ? 'next_btn' : 'prev_btn'}`).click()
-      } else if (!setting.mode) {
+      } else if (!setting.mode && !setting.navigating) {
         setting.isDragging = true
         setProperties({
           target: target,
@@ -107,7 +109,7 @@ function init() {
       pos.d = roundedClient(e, 'Y')  
       mouse.up(document, 'add', onLetGo)
       mouse.move(document, 'add', onDrag)
-      if (!setting.mode) target.classList.add('drag')
+      if (!setting.mode && !setting.navigating) target.classList.add('drag')
     }
     const onDrag = e =>{
       const x = roundedClient(e, 'X')
@@ -123,10 +125,12 @@ function init() {
         target.classList.remove('drag')
         const newX = target.offsetLeft - pos.a
         const newY = target.offsetTop - pos.b
-        setProperties({
-          target: target,
-          x: px(newX), y: px(newY),
-        })
+        if (!setting.navigating) {
+          setProperties({
+            target: target,
+            x: px(newX), y: px(newY),
+          })
+        }
         // need to delay this so click action doesn't trigger straight after dragging
         setTimeout(()=> setting.isDragging = false)
       }
@@ -286,6 +290,7 @@ function init() {
         y: px(20 + gap + (cardSize + gap) * calcY(i, gridNo)),
         w: px(cardSize),
         h: px(cardSize),
+        z: 0 - calcY(i, gridNo),
         prefix: 'grid'
       })
     })
@@ -325,8 +330,14 @@ function init() {
     const selectedCard = setting.images.find(card => card.dataset.index === e.target.dataset.index)
     const selectedCardIndex = setting.sortedImages.indexOf(selectedCard)
     const { left, top } = selectedCard.getBoundingClientRect()
-
-    if (selectedCardIndex === 0) {
+    if (document.querySelector('.pick')) {
+      const otherCards = setting.sortedImages.filter((_card, i) => i !== selectedCardIndex)
+      setting.sortedImages = [selectedCard,...otherCards]
+      reposition()
+      hideImage(selectedCardIndex)
+      e.target.parentNode.classList.remove('pick')
+      setting.imgIndex = null
+    } else if (selectedCardIndex === 0) {
       hideOrDisplayImage(e)
     } else {
       const cardsToMove = setting.sortedImages.filter((_card, i) => i > selectedCardIndex)
@@ -361,14 +372,13 @@ function init() {
       : cardIndex - 1 < 0 ? setting.sortedImages.length - 1 : cardIndex - 1
     currentCard.classList.remove('pick')
     setting.sortedImages[nextIndex].classList.add('pick')
+    setting.imgIndex = nextIndex
     if (isStackMode()) {    
       const otherCards = setting.sortedImages.filter((_card, i) => i !== nextIndex)
-      
-      // TODO not quite right - this should depend on the direction and index
       setting.sortedImages = direction === 'next' 
-        ? [setting.sortedImages[nextIndex],...otherCards]
-        : [...otherCards, setting.sortedImages[nextIndex]]
-      console.log(setting.sortedImages)
+        ? [...otherCards, setting.sortedImages[nextIndex]]
+        : [setting.sortedImages[nextIndex], ...otherCards]
+      reposition()
     }
     setTimeout(()=> setting.navigating = false, 300)
   } 

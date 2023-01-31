@@ -23,6 +23,7 @@ img {
   overflow: hidden;
   display: flex;
   justify-content: center;
+  pointer-events: none;
 }
 
 .portfolio {
@@ -44,6 +45,7 @@ img {
   z-index: var(--z);
   overflow: hidden;
   cursor: pointer;
+  pointer-events: auto;
 }
 
 .card.drag {
@@ -200,7 +202,7 @@ img {
   left: var(--grid-left);
   width: var(--grid-width);
   height: var(--grid-height);
-  z-index: 0;
+  z-index: var(--grid-z);
 }
 
 .wrapper.overflow {
@@ -236,6 +238,7 @@ button {
   background-size: 32px !important; 
   cursor: pointer;
   filter: invert();
+  pointer-events: auto;
 }
 
 button:hover,
