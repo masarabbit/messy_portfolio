@@ -1,8 +1,6 @@
 
 function init() {
 
-  // TODO consider moving nav position to left and right of page (and display when relevant)
-
   const imgData = [
     { h: 500, w: 500, img: 'mochimochiusagi.gif' },
     { h: 634, w: 450, img: 'popcorn_bunny.png' },
@@ -297,8 +295,7 @@ function init() {
 
     setProperties({
       target: elements.nav,
-      x: px(defaultX + 128),
-      y: px(defaultY + 300),
+      y: w < 600 ? px(h - 150) : px((h / 2) - 15),
     })
   }
 
@@ -310,9 +307,11 @@ function init() {
 
   const hideOrDisplayImage = e => {
     if (!setting.isDragging) {
+      console.log('hide or display')
       const { images, imgIndex } = setting
       setting.images.forEach(card => card.classList.remove('pick'))
       e.target.parentNode.classList.add('pick')
+      elements.portfolio.classList.add('display')
   
       if (isNum(imgIndex) && isActive(images[imgIndex])) {
         hideImage(imgIndex)
@@ -451,7 +450,10 @@ function init() {
     }
   }
 
-  const hideImage = index => setRandomAngleAndPosition(setting.images[index], imgData[index])
+  const hideImage = index => {
+    elements.portfolio.classList.remove('display')
+    setRandomAngleAndPosition(setting.images[index], imgData[index])
+  }
   
   const changeMode = mode => {
     setting.mode = setting.mode === mode ? null : mode

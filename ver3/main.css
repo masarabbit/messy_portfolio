@@ -31,6 +31,8 @@ img {
   height: 100%;
   width: 100%;
   background-color:transparent;
+  display: flex;
+  align-items: center;
 }
 
 .card { 
@@ -280,19 +282,20 @@ button.disabled {
 
 nav {
   position: absolute;
+  left: var(--left);
+  top: var(--top); 
   display: flex;
-  width: 80px;
+  justify-content: space-between;
+  width: 100%;
   height: 48px;
-  left: 0;
-  top: 0;
   pointer-events: none;
   transition: 0.4s;
   opacity: 0;
+  z-index: 99999;
 }
 
+.portfolio.display nav,
 .portfolio.stack nav {
-  left: var(--left);
-  top: var(--top);
   pointer-events: auto;
   opacity: 1;
 }
@@ -302,8 +305,13 @@ nav {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAKZJREFUWEfd1UkKwCAMBdB4/0O3CC24y59EWrfV/OdAM+rwGIfz61OAqyoPZk5gAuZg1rQ3zBR7AVGECoghHEAE4QJsRAJgIVIAGZEESIg0gEbsAFCIXQAYsRMAIX4NgDYHTXpa2tqMui4H14UnVhUKYGpSvR0BUOHQK13OugPQ4UmAFJ4CyOEJgBXuAuxwBxAJVwGxcAUQDWcB3e9X+h7fEas4DrgB2MQaIfd0dGsAAAAASUVORK5CYII=);
 }
 
+.next_btn {
+  margin-right: 0;
+}
+
 .prev_btn {
-  transform: scale(-1, 1)
+  transform: scale(-1, 1);
+  margin-left: 0;
 }
 
 
