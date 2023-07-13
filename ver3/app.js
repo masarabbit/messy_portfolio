@@ -1,5 +1,6 @@
 
 function init() {
+  // TODO replace images
 
   const imgData = [
     { h: 500, w: 500, img: 'mochimochiusagi.gif' },
@@ -295,6 +296,7 @@ function init() {
 
     setProperties({
       target: elements.nav,
+      x: w > 900 ? px((w - 900) / 2) : px(0),
       y: w < 600 ? px(h - 150) : px((h / 2) - 15),
     })
   }
