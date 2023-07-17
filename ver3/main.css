@@ -204,7 +204,6 @@ img {
   left: var(--grid-left);
   width: var(--grid-width);
   height: var(--grid-height);
-  z-index: var(--grid-z);
 }
 
 .wrapper.overflow {

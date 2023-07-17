@@ -289,7 +289,6 @@ function init() {
         y: px(20 + gap + (cardSize + gap) * calcY(i, gridNo)),
         w: px(cardSize),
         h: px(cardSize),
-        z: 0 - calcY(i, gridNo),
         prefix: 'grid'
       })
     })
