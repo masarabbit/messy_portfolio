@@ -268,6 +268,7 @@ function init() {
     const gridNo = setGridNo(w)
     const gap = 12
     let cardSize = ((w - gap) / gridNo) - gap
+    // this limits the card size to prevent overflow
     if (gridNo === 8 && cardSize > 148) cardSize = 148
     
     setting.sortedImages.forEach((card, i) => {
