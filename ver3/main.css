@@ -55,7 +55,6 @@ img {
 }
 
 .portfolio:not(.stack) .card.pick {
-  animation: forwards 0.4s display-card;
   width: var(--display-width);
   height: var(--display-height);
   top: var(--display-top);

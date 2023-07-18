@@ -55,10 +55,10 @@ function init() {
   }
 
   const setProperties = ({ target, h, w, x, y, deg, z, prefix, delay }) => {
-    if (h) setProperty(target, 'height', h, prefix)
     if (w) setProperty(target, 'width', w, prefix)
-    if (y) setProperty(target, 'top', y, prefix)
+    if (h) setProperty(target, 'height', h, prefix)
     if (x) setProperty(target, 'left', x, prefix)
+    if (y) setProperty(target, 'top', y, prefix)
     if (isNum(deg)) setProperty(target, 'deg', `${deg}deg`, prefix)
     if (z) setProperty(target, 'z', z, prefix)
     if (isNum(delay)) setProperty(target, 'delay', `${delay}s`, prefix)
