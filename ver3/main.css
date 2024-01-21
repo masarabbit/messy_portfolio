@@ -176,9 +176,9 @@ img {
   display: none;
 }
 
-.portfolio.grid {
+/* .portfolio.grid {
   max-width: 1300px;
-}
+} */
 
 .portfolio.grid .card > img {
   position: absolute;
