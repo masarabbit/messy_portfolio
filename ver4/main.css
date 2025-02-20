@@ -121,7 +121,7 @@ img {
   } 
 }
 
-.spin_to_the_back {
+.spin-to-the-back {
   animation: forwards spin-to-back calc(0.6s + var(--prev-stack-delay));
 }
 
@@ -148,7 +148,7 @@ img {
   }
 }
 
-.spin_to_the_front {
+.spin-to-the-front {
   animation: forwards spin-to-front calc(0.6s);
 }
 

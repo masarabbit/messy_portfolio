@@ -341,6 +341,7 @@ function init() {
     } else if (selectedCardIndex === 0) {
       hideOrDisplayImage(e)
     } else {
+      console.log('sorted')
       const cardsToMove = setting.sortedImages.filter((_card, i) => i > selectedCardIndex)
       const otherCards = setting.sortedImages.filter((_card, i) => i <= selectedCardIndex)
       setting.sortedImages = [...cardsToMove,...otherCards]
