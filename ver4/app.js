@@ -147,7 +147,7 @@ function init() {
       Object.assign(this, {
         el: Object.assign(document.createElement('div'), {
           className: 'card',
-          innerHTML: `<img class="${aspect}" data-index="${index}" src= "../assets/${props.img}" alt="${props.img.split('.')[0]}">`,
+          innerHTML: `<img class="${aspect}" src= "../assets/${props.img}" alt="${props.img.split('.')[0]}">`,
         }),
         index,
         aspect,
