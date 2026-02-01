@@ -9,11 +9,16 @@
     <title>Messy Portfolio ver4</title>
   </head>
   <body>
-    <div class="wrapper">
+    <div class="wrapper" state="deck">
       <div class="nav">
-        <div class="arrow" data-dir="left"><</div>
-        <div class="arrow" data-dir="right">></div>
+        <div class="arrow" data-action="shuffle-back"><</div>
+        <div class="arrow" data-action="shuffle-front">></div>
       </div>
+    </div>
+
+    <div class="btn-wrapper">
+      <button data-state="deck">deck</button>
+      <button data-state="scatter">scatter</button>
     </div>
   </body>
 </html>

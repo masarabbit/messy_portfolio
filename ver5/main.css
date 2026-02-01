@@ -3,16 +3,18 @@
   user-select: none;
   --n: 4px;
   touch-action: none;
+  --bg: #2606de;
 }
 
 body {
-  background-color: #81d8d0;
+  /* background-color: #de5106; */
+  background-color: var(--bg);
   margin: 0;
   padding: 0;
   font-family: sans-serif;
   overscroll-behavior: contain;
   font-size: 16px;
-  color: #1a97a8;
+  color: #fff;
 }
 
 .wrapper {
@@ -32,16 +34,32 @@ body {
   translate: var(--ml) var(--mt);
   z-index: var(--z);
   transition: 0.2s;
+  transform-origin: center;
 }
 
 .card {
   transform: rotateX(var(--x)) rotateY(var(--y)) var(--scale);
   border-radius: calc(var(--n) * 2);
-  background-color: rgb(49, 42, 112);
   width: 200px;
   height: 280px;
   transition: 0.2s;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.card img {
+  height: 300px;
+  aspect-ratio: var(--ratio);
+  pointer-events: none;
+}
+
+.card-wrapper.tilt {
+  transform-origin: bottom left;
+  rotate: -8deg;
+  translate: calc(var(--ml) - 40px) calc(var(--mt) - 10px);
 }
 
 .nav {
@@ -53,13 +71,19 @@ body {
   pointer-events: none;
 }
 
-.nav .arrow {
+[state='scatter'] .arrow {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.arrow {
+  opacity: 1;
   pointer-events: all;
   cursor: pointer;
 }
 
-[state='shuffle-back'] {
-  animation: forwards shuffle-back 0.5s;
+[state='deck'] [state='shuffle-back'] {
+  animation: forwards shuffle-back 0.4s;
 }
 
 @keyframes shuffle-back {
@@ -79,8 +103,8 @@ body {
   }
 }
 
-[state='shuffle-front'] {
-  animation: forwards shuffle-front 0.5s;
+[state='deck'] [state='shuffle-front'] {
+  animation: forwards shuffle-front 0.4s;
 }
 
 @keyframes shuffle-front {
@@ -91,13 +115,73 @@ body {
   }
   40% {
     translate: calc(var(--prev-ml) - 200px) calc(var(--prev-mt) - 600px);
-    /* z-index: 999; */
     z-index: var(--z);
   }
   100% {
     translate: var(--ml) var(--mt);
     rotate: -360deg;
-
     z-index: 999;
   }
+}
+
+.btn-wrapper {
+  position: absolute;
+  z-index: 9999;
+}
+
+button {
+  box-shadow: 0 0 0 1px #fff;
+  border: 0;
+  background-color: transparent;
+  color: #fff;
+  pointer-events: all;
+}
+
+button:hover {
+  background-color: #fff;
+  color: var(--bg);
+}
+
+[state='scatter'] .card-wrapper {
+  translate: var(--scatter-x) var(--scatter-y);
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+
+[state='scatter'] .card-wrapper:hover {
+  z-index: 9999;
+}
+
+[state='scatter'] .card {
+  transform: rotateX(var(--scatter-angle-x)) rotateY(var(--scatter-angle-y))
+    scale(var(--scatter-scale));
+}
+
+[state='scatter'] .card:hover {
+  transform: rotateX(var(--x)) rotateY(var(--y)) var(--scale);
+}
+
+[state='scatter'] .selected .card {
+  transform: rotateX(0) rotateY(0) scale(1);
+  width: 100%;
+  height: 100%;
+}
+
+[state='scatter'] .selected {
+  width: 100vw;
+  height: 100dvh;
+  translate: -50% -50%;
+  top: 50%;
+  left: 50%;
+  z-index: 9999;
+}
+
+[state='scatter'] .selected .card img {
+  max-width: calc(100vw - 40px);
+  max-height: calc(100dvh - 40px);
+  width: auto;
+  height: auto;
+  border-radius: calc(var(--n) * 2);
+  aspect-ratio: var(--ratio);
 }
