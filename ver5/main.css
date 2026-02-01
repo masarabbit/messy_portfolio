@@ -29,10 +29,9 @@ body {
   position: absolute;
   transform-style: preserve-3d;
   perspective: 600px;
-  margin-left: var(--ml);
-  margin-top: var(--mt);
-  /* box-shadow: 0 0 0 1px hotpink; */
+  translate: var(--ml) var(--mt);
   z-index: var(--z);
+  transition: 0.2s;
 }
 
 .card {
@@ -57,4 +56,48 @@ body {
 .nav .arrow {
   pointer-events: all;
   cursor: pointer;
+}
+
+[state='shuffle-back'] {
+  animation: forwards shuffle-back 0.5s;
+}
+
+@keyframes shuffle-back {
+  0% {
+    translate: var(--prev-ml) var(--prev-mt);
+    rotate: 0;
+    z-index: 999;
+  }
+  50% {
+    translate: calc(var(--prev-ml) + 100px) calc(var(--prev-mt) - 500px);
+    z-index: var(--z);
+  }
+  100% {
+    translate: var(--ml) var(--mt);
+    rotate: -360deg;
+    z-index: var(--z);
+  }
+}
+
+[state='shuffle-front'] {
+  animation: forwards shuffle-front 0.5s;
+}
+
+@keyframes shuffle-front {
+  0% {
+    translate: var(--prev-ml) var(--prev-mt);
+    rotate: 0;
+    z-index: var(--z);
+  }
+  40% {
+    translate: calc(var(--prev-ml) - 200px) calc(var(--prev-mt) - 600px);
+    /* z-index: 999; */
+    z-index: var(--z);
+  }
+  100% {
+    translate: var(--ml) var(--mt);
+    rotate: -360deg;
+
+    z-index: 999;
+  }
 }

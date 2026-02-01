@@ -16,9 +16,46 @@ window.addEventListener('DOMContentLoaded', () => {
 
   const colors = ['#6618aa', '#189baa', '#cf7e1c', '#ed559f', '#18aa63']
 
+  const settings = {
+    shiftLeft() {
+      console.log('')
+    },
+    cards: [],
+    get lastCard() {
+      return this.cards[this.cards.length - 1]
+    },
+    get cardsOtherThanLast() {
+      return this.cards.slice(0, this.cards.length - 1)
+    },
+    get cardsOtherThanFirst() {
+      return this.cards.slice(1)
+    },
+  }
   document.querySelectorAll('.arrow').forEach(b => {
     b.addEventListener('click', e => {
       console.log(e.target.dataset.dir)
+      if (e.target.dataset.dir === 'right') {
+        settings.lastCard.el.setAttribute('state', 'shuffle-back')
+
+        settings.cards = [settings.lastCard, ...settings.cardsOtherThanLast]
+        settings.cards.forEach(card => {
+          card.setOffset()
+        })
+        setTimeout(() => {
+          settings.cards.forEach(card => card.setPrevOffset())
+        }, 500)
+      }
+      if (e.target.dataset.dir === 'left') {
+        settings.cards[0].el.setAttribute('state', 'shuffle-front')
+
+        settings.cards = [...settings.cardsOtherThanFirst, settings.cards[0]]
+        settings.cards.forEach(card => card.setOffset())
+        setTimeout(() => {
+          settings.cards.forEach(card => {
+            card.setPrevOffset()
+          })
+        }, 500)
+      }
     })
   })
 
@@ -28,7 +65,6 @@ window.addEventListener('DOMContentLoaded', () => {
         className: 'card-wrapper',
         innerHTML: '<div class="card"></div>',
       })
-      this.i = i
       wrapper.appendChild(this.el)
       this.card = this.el.querySelector('.card')
       this.card.style.backgroundColor = color
@@ -36,14 +72,29 @@ window.addEventListener('DOMContentLoaded', () => {
       const { width: w, height: h } = this.el.getBoundingClientRect()
       this.w = w
       this.h = h
-      this.setProperties({
-        ml: i * 20 + 'px',
-        mt: i * 20 + 'px',
-        z: i,
-      })
+      this.setPrevOffset()
+      this.setOffset()
 
       this.el.addEventListener('pointermove', e => this.handleInteraction(e))
       this.el.addEventListener('pointerleave', () => this.clearProperties())
+    }
+    get i() {
+      return settings.cards.indexOf(this)
+    }
+    setPrevOffset() {
+      this.setProperties({
+        'prev-ml': this.i * 20 + 'px',
+        'prev-mt': this.i * 20 + 'px',
+        'prev-z': this.i,
+      })
+      this.el.setAttribute('state', 'neutral')
+    }
+    setOffset() {
+      this.setProperties({
+        ml: this.i * 20 + 'px',
+        mt: this.i * 20 + 'px',
+        z: this.i,
+      })
     }
     handleInteraction(e) {
       // e.preventDefault()
@@ -86,10 +137,11 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  colors.forEach((color, i) => {
-    new ArtCard({
+  settings.cards = colors.map((color, i) => {
+    return new ArtCard({
       i,
       color,
     })
   })
+  settings.cards.forEach(card => card.setOffset())
 })
