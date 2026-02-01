@@ -146,7 +146,8 @@ button:hover {
   translate: var(--scatter-x) var(--scatter-y);
   top: 0;
   left: 0;
-  z-index: 0;
+  z-index: var(--scatter-scale);
+  /* transition: 4s; */
 }
 
 [state='scatter'] .card-wrapper:hover {
@@ -175,6 +176,7 @@ button:hover {
   top: 50%;
   left: 50%;
   z-index: 9999;
+  transition: 0.5s;
 }
 
 [state='scatter'] .selected .card img {

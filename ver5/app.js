@@ -104,6 +104,12 @@ window.addEventListener('DOMContentLoaded', () => {
     })
   })
 
+  // setInterval(() => {
+  //   if (settings.wrapperState === 'scatter') {
+  //     settings.cards.forEach(card => card.setScatterPos())
+  //   }
+  // }, 10000)
+
   class ArtCard {
     constructor({ w, h, img }) {
       const image = `<img style="--ratio: ${w} / ${h};" src="../assets/${img}"/>`
