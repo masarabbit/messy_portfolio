@@ -3,6 +3,8 @@ window.addEventListener('DOMContentLoaded', () => {
   const randomN = n => Math.floor(Math.random() * n)
   const randomAngle = n => Math.floor(Math.random() * (n || 360)) + 'deg'
 
+  const indicator = document.querySelector('.indicator')
+
   const kebabToCamelCase = str => {
     return str
       .split('-')
@@ -42,28 +44,26 @@ window.addEventListener('DOMContentLoaded', () => {
     get cardsOtherThanLast() {
       return this.cards.slice(0, this.cards.length - 1)
     },
-    shuffleFront() {
-      this.lastCard.el.setAttribute('state', 'shuffle-back')
-
-      this.cards = [this.lastCard, ...this.cardsOtherThanLast]
-      this.cards.forEach(card => {
-        card.setOffset()
-      })
-      setTimeout(() => {
-        this.cards.forEach(card => card.setPrevOffset())
-      }, 400)
-    },
-    shuffleBack(card) {
-      const cardToMove = card || this.cards[0]
-      cardToMove.el.setAttribute('state', 'shuffle-front')
-
-      this.cards = [...this.cards.filter(c => c !== cardToMove), cardToMove]
+    updateCardOffsets() {
       this.cards.forEach(card => card.setOffset())
       setTimeout(() => {
-        this.cards.forEach(card => {
-          card.setPrevOffset()
-        })
+        this.cards.forEach(card => card.setPrevOffset())
+        this.isAnimating = false
       }, 400)
+      this.isAnimating = true
+    },
+    shuffleFront() {
+      if (this.isAnimating) return
+      this.lastCard.el.setAttribute('state', 'shuffle-back')
+      this.cards = [this.lastCard, ...this.cardsOtherThanLast]
+      this.updateCardOffsets()
+    },
+    shuffleBack(card) {
+      if (this.isAnimating) return
+      const cardToMove = card || this.cards[0]
+      cardToMove.el.setAttribute('state', 'shuffle-front')
+      this.cards = [...this.cards.filter(c => c !== cardToMove), cardToMove]
+      this.updateCardOffsets()
     },
     resetPointers() {
       this.pointerdown = null
@@ -75,17 +75,20 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   document.querySelectorAll('.arrow').forEach(b => {
-    b.addEventListener('click', e =>
+    b.addEventListener('click', e => {
       settings[kebabToCamelCase(e.target.dataset.action)]()
-    )
+      settings.pointerdown = null
+    })
   })
 
   wrapper.addEventListener('pointerdown', e => {
     settings.pointerdown = e.pageX
+    indicator.innerHTML = `pd ${settings.pointerdown} | ${settings.pointermove}`
   })
 
   wrapper.addEventListener('pointermove', e => {
     if (settings.pointerdown) settings.pointermove = e.pageX
+    indicator.innerHTML = `pm ${settings.pointerdown} | ${settings.pointermove}`
   })
 
   wrapper.addEventListener('pointerleave', () => {

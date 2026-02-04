@@ -187,3 +187,9 @@ button:hover {
   border-radius: calc(var(--n) * 2);
   aspect-ratio: var(--ratio);
 }
+
+.indicator {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
